@@ -25,4 +25,5 @@
 
     tls off
     gzip
+    push
 }
