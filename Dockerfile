@@ -5,7 +5,7 @@ ARG PHP_VERSION=7.3
 # -----------------------------------------------------
 FROM alpine as caddy
 
-ARG plugins=http.git,http.cache,http.expires,http.minify,http.realip
+ARG plugins=http.git,http.cache,http.expires,http.minify,http.realip,http.header
 
 RUN apk --update add git curl linux-headers
 
