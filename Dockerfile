@@ -27,7 +27,7 @@ ARG DECORATE_WORKERS
 ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
-ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c php7-amqp icu libsodium-dev oniguruma-dev"
+ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c php7-amqp icu libsodium-dev oniguruma-dev"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar python py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PECL_PACKAGES="redis amqp apcu"
 ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium"
@@ -59,7 +59,7 @@ RUN apk add --update --no-cache $REQUIRED_PACKAGES $DEVELOPMENT_PACKAGES
 RUN ulimit -n 16384
 
 # Install Supervisor
-RUN pip install supervisor-stdout
+RUN pip install supervisor supervisor-stdout
 
 # Fix Iconv
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted gnu-libiconv
