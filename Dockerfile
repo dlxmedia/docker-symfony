@@ -22,7 +22,6 @@ FROM php:$PHP_VERSION-fpm-alpine
 
 ARG PORT=9001
 ARG PUBLIC_DIR=public
-ARG DECORATE_WORKERS
 
 ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
@@ -48,10 +47,6 @@ COPY --from=caddy /tmp/caddy /usr/local/sbin/caddy
 # Composer install
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Hide decorators - only available for PHP 7.3 and above
-RUN if [[ -z "$DECORATE_WORKERS" ]]; then \
-    echo "decorate_workers_output = no" >> /usr/local/etc/php-fpm.d/docker.conf; fi
-
 # Install Packages
 RUN apk add --update --no-cache $REQUIRED_PACKAGES $DEVELOPMENT_PACKAGES
 
@@ -67,7 +62,7 @@ RUN yes '' | pecl install -f $PECL_PACKAGES
 RUN docker-php-ext-enable $PECL_PACKAGES
 
 # Configure GD to use freetype fonts
-RUN if [[ "$PHP_VERSION" != "7.2" ]] && [[ "$PHP_VERSION" != "7.3" ]]; then \
+RUN if [[ "x$PHP_VERSION" != "7.3" ]]; then \
     docker-php-ext-configure gd --with-freetype; fi
 
 # Install Non-Pecl Packages
