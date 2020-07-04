@@ -27,7 +27,7 @@ ARG DECORATE_WORKERS
 ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
-ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c php7-amqp icu libsodium-dev oniguruma-dev libwebp-dev libpng-dev"
+ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c php7-amqp icu libsodium-dev oniguruma-dev libwebp-dev libpng-dev freetype-dev"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar python3 py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PECL_PACKAGES="redis amqp apcu ast"
 ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd"
@@ -65,6 +65,9 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 # Install Pecl Packages
 RUN yes '' | pecl install -f $PECL_PACKAGES
 RUN docker-php-ext-enable $PECL_PACKAGES
+
+# Configure GD to use freetype fonts
+RUN docker-php-ext-configure gd --with-freetype
 
 # Install Non-Pecl Packages
 RUN docker-php-ext-install $EXT_PACKAGES
