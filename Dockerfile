@@ -62,7 +62,7 @@ RUN yes '' | pecl install -f $PECL_PACKAGES
 RUN docker-php-ext-enable $PECL_PACKAGES
 
 # Configure GD to use freetype fonts
-RUN if [[ "x$PHP_VERSION" != "7.3" ]]; then \
+RUN if [[ $PHP_VERSION != "7.3" ]]; then \
     docker-php-ext-configure gd --with-freetype; fi
 
 # Install Non-Pecl Packages
