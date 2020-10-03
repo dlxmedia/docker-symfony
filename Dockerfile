@@ -1,14 +1,12 @@
 ARG PHP_VERSION=7.4
-ARG CADDY_VERSION=2.1
+ARG CADDY_VERSION=2
 
 # -----------------------------------------------------
 # Caddy Install
 # -----------------------------------------------------
 FROM caddy:$CADDY_VERSION-builder AS builder
 
-RUN xcaddy build \
-#    --with github.com/caddyserver/nginx-adapter \
-#    --with github.com/hairyhenderson/caddy-teapot-module@v0.0.3-0
+RUN xcaddy build
 
 FROM caddy:$CADDY_VERSION
 
