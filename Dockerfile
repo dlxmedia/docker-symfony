@@ -41,7 +41,7 @@ COPY ./manifest /
 COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
 
 # Composer install
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Hide decorators - only available for PHP 7.3 and above
 RUN if [[ -z "$DECORATE_WORKERS" ]]; then \
@@ -58,7 +58,7 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/co
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
 # Install Pecl Packages
-RUN wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar -o /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
+RUN wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
 RUN pickle install $PECL_PACKAGES
 RUN docker-php-ext-enable $PECL_PACKAGES
 
