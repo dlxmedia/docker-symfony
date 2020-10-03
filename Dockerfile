@@ -58,7 +58,8 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/co
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
 # Install Pecl Packages
-RUN yes '' | pecl install -f $PECL_PACKAGES
+RUN wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar -o /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
+RUN pickle install $PECL_PACKAGES
 RUN docker-php-ext-enable $PECL_PACKAGES
 
 # Configure GD to use freetype fonts
