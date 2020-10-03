@@ -1,19 +1,16 @@
 ARG PHP_VERSION=7.4
+ARG CADDY_VERSION=2.1
 
 # -----------------------------------------------------
 # Caddy Install
 # -----------------------------------------------------
-FROM alpine as caddy
+FROM caddy:$CADDY_VERSION-builder AS builder
 
-ARG plugins=http.git,http.cache,http.expires,http.minify,http.realip
+RUN xcaddy build \
+#    --with github.com/caddyserver/nginx-adapter \
+#    --with github.com/hairyhenderson/caddy-teapot-module@v0.0.3-0
 
-RUN apk --update add git curl linux-headers
-
-RUN curl --silent --show-error --fail --location \
-      --header "Accept: application/tar+gzip, application/x-gzip, application/octet-stream" -o - \
-      "https://caddyserver.com/download/linux/amd64?plugins=${plugins}&license=personal&telemetry=off" \
-    | tar --no-same-owner -C /tmp -xz caddy \
-    && chmod 0755 /tmp/caddy
+FROM caddy:$CADDY_VERSION
 
 # -----------------------------------------------------
 # App Itself
@@ -43,7 +40,7 @@ WORKDIR /app
 COPY ./manifest /
 
 # Caddy
-COPY --from=caddy /tmp/caddy /usr/local/sbin/caddy
+COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
 
 # Composer install
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
