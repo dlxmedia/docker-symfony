@@ -25,7 +25,7 @@ ENV PUBLIC_DIR=$PUBLIC_DIR
 ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c php7-amqp icu libsodium-dev oniguruma-dev libwebp-dev libpng-dev freetype-dev libjpeg-turbo-dev"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar python3 py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PECL_PACKAGES="redis amqp apcu ast"
-ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd"
+ENV EXT_PACKAGES="zip zlib simplexml phar dom json sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -57,6 +57,9 @@ RUN ulimit -n 16384
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
+# Install Non-Pecl Packages
+RUN docker-php-ext-install $EXT_PACKAGES
+
 # Install Pecl Packages
 RUN wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
 RUN pickle install $PECL_PACKAGES
@@ -65,9 +68,6 @@ RUN docker-php-ext-enable $PECL_PACKAGES
 # Configure GD to use freetype fonts
 RUN if [[ -z "$NO_FREETYPE" ]]; then \
     docker-php-ext-configure gd --with-freetype; fi
-
-# Install Non-Pecl Packages
-RUN docker-php-ext-install $EXT_PACKAGES
 
 # Install Parallel Composer Plugin
 RUN composer global require hirak/prestissimo --no-plugins --no-scripts
