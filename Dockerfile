@@ -62,7 +62,7 @@ RUN docker-php-ext-install $EXT_PACKAGES
 
 # Install Pecl Packages
 RUN wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
-RUN pickle install $PECL_PACKAGES
+RUN for package in $PECL_PACKAGES; do pickle install $package; done
 RUN docker-php-ext-enable $PECL_PACKAGES
 
 # Configure GD to use freetype fonts
