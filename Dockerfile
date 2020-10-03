@@ -69,8 +69,5 @@ RUN docker-php-ext-enable $PECL_PACKAGES
 RUN if [[ -z "$NO_FREETYPE" ]]; then \
     docker-php-ext-configure gd --with-freetype; fi
 
-# Install Parallel Composer Plugin
-RUN composer global require hirak/prestissimo --no-plugins --no-scripts
-
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES
