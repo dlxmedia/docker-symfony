@@ -24,7 +24,8 @@ ENV PUBLIC_DIR=$PUBLIC_DIR
 
 ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c php7-amqp icu libsodium-dev oniguruma-dev libwebp-dev libpng freetype libjpeg-turbo"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar python3 py-pip pcre-dev rabbitmq-c-dev icu-dev libjpeg-turbo-dev freetype-dev libpng-dev"
-ENV PECL_PACKAGES="redis amqp apcu ast"
+ENV PICKLE_PACKAGES="amqp apcu ast"
+ENV PECL_PACKAGES="redis"
 ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd"
 
 ENV DOCKER=true
@@ -61,11 +62,10 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 RUN docker-php-ext-install $EXT_PACKAGES
 
 # Install Pecl Packages
-RUN wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
-RUN for package in $PECL_PACKAGES; do pickle install $package; done \
-    && docker-php-source extract \
-    && for ext in `ls /usr/src/php/ext`; do echo '*' $( php -r "if(extension_loaded('$ext')){echo '[x] $ext';}else{echo '[ ] $ext';}" ); done
-#RUN docker-php-ext-enable $PECL_PACKAGES
+RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
+RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
+RUN yes '' | pecl install -f $PECL_PACKAGES
+RUN docker-php-ext-enable $PICKLE_PACKAGES $PECL_PACKAGES
 
 # Configure GD to use freetype fonts
 RUN if [[ -z "$NO_FREETYPE" ]]; then \
