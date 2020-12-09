@@ -54,7 +54,7 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/co
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
 # Configure GD to use freetype fonts
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg; fi
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 # Install Non-Pecl Packages
 RUN docker-php-ext-install $EXT_PACKAGES
