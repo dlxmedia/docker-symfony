@@ -7,16 +7,14 @@ workflows:
     jobs:
       - docker/publish:
           image: dlxmedia/docker-symfony
-          tag: "7.3"
-          extra_build_args: '--build-arg PHP_VERSION=7.3 --build-arg NO_FREETYPE=yes'
-      - docker/publish:
-          image: dlxmedia/docker-symfony
           tag: "7.4"
+          dockerfile: "7.4/Dockerfile"
           extra_build_args: '--build-arg PHP_VERSION=7.4'
       - docker/publish:
           image: dlxmedia/docker-symfony
           tag: "8.0"
-          extra_build_args: '--build-arg PHP_VERSION=8.0.0rc1'
+          dockerfile: "8.0/Dockerfile"
+          extra_build_args: '--build-arg PHP_VERSION=8.0'
       - docker/publish:
           image: dlxmedia/docker-symfony
           tag: latest
