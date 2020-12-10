@@ -2,6 +2,21 @@ ARG PHP_VERSION=8.0
 ARG CADDY_VERSION=2
 
 # -----------------------------------------------------
+# AMQP
+# -----------------------------------------------------
+FROM php:$PHP_VERSION-fpm-alpine AS ext-amqp
+
+ENV EXT_AMQP_VERSION=master
+
+RUN docker-php-source extract \
+    && apk -Uu add git rabbitmq-c-dev \
+    && git clone --branch $EXT_AMQP_VERSION --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
+    && cd /usr/src/php/ext/amqp && git submodule update --init \
+    && docker-php-ext-install amqp
+
+RUN ls -al /usr/local/lib/php/extensions/
+
+# -----------------------------------------------------
 # Caddy Install
 # -----------------------------------------------------
 FROM caddy:$CADDY_VERSION-builder AS builder
@@ -22,9 +37,9 @@ ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
 ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo"
-ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar python3 py-pip pcre-dev rabbitmq-c-dev icu-dev php7-amqp"
+ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar python3 py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PICKLE_PACKAGES="apcu ast"
-ENV PECL_PACKAGES="redis amqp"
+ENV PECL_PACKAGES="redis"
 ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd"
 
 ENV DOCKER=true
@@ -33,6 +48,9 @@ ENV COMPOSER_NO_INTERACTION 1
 ENV COMPOSER_CACHE_DIR /tmp
 
 WORKDIR /app
+
+COPY --from=ext-amqp /usr/local/etc/php/conf.d/docker-php-ext-amqp.ini /usr/local/etc/php/conf.d/docker-php-ext-amqp.ini
+COPY --from=ext-amqp /usr/local/lib/php/extensions/no-debug-non-zts-20200930/amqp.so /usr/local/lib/php/extensions/no-debug-non-zts-20200930/amqp.so
 
 # Copying manifest files to host
 COPY ./8.0/manifest /
