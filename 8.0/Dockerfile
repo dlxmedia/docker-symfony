@@ -2,21 +2,6 @@ ARG PHP_VERSION=8.0
 ARG CADDY_VERSION=2
 
 # -----------------------------------------------------
-# AMQP
-# -----------------------------------------------------
-FROM php:$PHP_VERSION-fpm-alpine AS ext-amqp
-
-ENV EXT_AMQP_VERSION=master
-
-RUN docker-php-source extract \
-    && apk -Uu add git rabbitmq-c-dev \
-    && git clone --branch $EXT_AMQP_VERSION --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
-    && cd /usr/src/php/ext/amqp && git submodule update --init \
-    && docker-php-ext-install amqp
-
-RUN ls -al /usr/local/lib/php/extensions/
-
-# -----------------------------------------------------
 # Caddy Install
 # -----------------------------------------------------
 FROM caddy:$CADDY_VERSION-builder AS builder
@@ -36,7 +21,7 @@ ARG PUBLIC_DIR=public
 ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
-ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo"
+ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libpq-dev"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar python3 py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PICKLE_PACKAGES="apcu ast"
 ENV PECL_PACKAGES="redis"
@@ -48,9 +33,6 @@ ENV COMPOSER_NO_INTERACTION 1
 ENV COMPOSER_CACHE_DIR /tmp
 
 WORKDIR /app
-
-COPY --from=ext-amqp /usr/local/etc/php/conf.d/docker-php-ext-amqp.ini /usr/local/etc/php/conf.d/docker-php-ext-amqp.ini
-COPY --from=ext-amqp /usr/local/lib/php/extensions/no-debug-non-zts-20200930/amqp.so /usr/local/lib/php/extensions/no-debug-non-zts-20200930/amqp.so
 
 # Copying manifest files to host
 COPY ./8.0/manifest /
@@ -82,6 +64,29 @@ RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pick
 RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
 RUN yes '' | pecl install -f $PECL_PACKAGES
 RUN docker-php-ext-enable $PICKLE_PACKAGES $PECL_PACKAGES
+
+# AMQP from master @TODO upgrade to release version when php8 support is ready
+ENV EXT_AMQP_VERSION=master
+RUN docker-php-source extract \
+    && apk -Uu add git rabbitmq-c-dev \
+    && git clone --branch $EXT_AMQP_VERSION --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
+    && cd /usr/src/php/ext/amqp && git submodule update --init \
+    && docker-php-ext-install amqp \
+    && docker-php-source delete
+
+# MaxMind
+RUN apk add --no-cache libmaxminddb \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git libmaxminddb-dev \
+    && git clone https://github.com/maxmind/MaxMind-DB-Reader-php.git \
+    && ( \
+      cd MaxMind-DB-Reader-php/ext \
+      && phpize \
+      && ./configure \
+      && make \
+      && make install \
+    ) \
+    && rm -r MaxMind-DB-Reader-php \
+    && docker-php-ext-enable maxminddb
 
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES

@@ -65,5 +65,19 @@ RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
 RUN yes '' | pecl install -f $PECL_PACKAGES
 RUN docker-php-ext-enable $PICKLE_PACKAGES $PECL_PACKAGES
 
+# MaxMind
+RUN apk add --no-cache libmaxminddb \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git libmaxminddb-dev \
+    && git clone https://github.com/maxmind/MaxMind-DB-Reader-php.git \
+    && ( \
+      cd MaxMind-DB-Reader-php/ext \
+      && phpize \
+      && ./configure \
+      && make \
+      && make install \
+    ) \
+    && rm -r MaxMind-DB-Reader-php \
+    && docker-php-ext-enable maxminddb
+
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES
