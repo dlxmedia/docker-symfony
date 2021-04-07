@@ -20,3 +20,8 @@ workflows:
           tag: latest
           dockerfile: "7.4/Dockerfile"
           extra_build_args: '--build-arg PHP_VERSION=7.4'
+      - docker/publish:
+          image: dlxmedia/docker-symfony
+          tag: latest
+          dockerfile: "rr/Dockerfile"
+          extra_build_args: '--build-arg PHP_VERSION=8.0'
