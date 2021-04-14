@@ -1,4 +1,5 @@
 ARG PHP_VERSION=8.0
+ARG RR_VERSION=2.0
 
 # -----------------------------------------------------
 # App Itself
@@ -7,16 +8,6 @@ FROM php:$PHP_VERSION-fpm-alpine
 
 ARG PORT=9001
 ARG PUBLIC_DIR=public
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-  vim \
-  libzip-dev \
-  unzip
-
-# Install PHP Extensions
-RUN docker-php-ext-install zip \
-  && docker-php-ext-install opcache \
-  && docker-php-ext-enable opcache
 
 ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
@@ -31,6 +22,8 @@ ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_NO_INTERACTION 1
 ENV COMPOSER_CACHE_DIR /tmp
+
+WORKDIR /app
 
 # Copying manifest files to host
 COPY ./8.0/manifest /
@@ -87,10 +80,10 @@ RUN apk add --no-cache libmaxminddb \
 RUN apk del $DEVELOPMENT_PACKAGES
 
 # Download RoadRunner
-ENV RR_VERSION 1.9.2
 RUN mkdir /tmp/rr \
   && cd /tmp/rr \
   && echo "{\"require\":{\"spiral/roadrunner\":\"${RR_VERSION}\"}}" >> composer.json \
+  && echo "{\"require\":{\"nyholm/psr7\":\"^1.4\"}}" >> composer.json \
   && composer install \
   && vendor/bin/rr get-binary -l /usr/local/bin \
   && rm -rf /tmp/rr
@@ -98,6 +91,9 @@ RUN mkdir /tmp/rr \
 # Copy RoadRunner config
 COPY config /etc/roadrunner
 
-WORKDIR /app
+COPY composer.json composer.lock symfony.lock .env.dist ./
+
+RUN composer install
+    && bin/console make:migration
 
 ENTRYPOINT ["/usr/local/bin/rr", "serve", "-d", "-c", "/etc/roadrunner/.rr.yaml"]
