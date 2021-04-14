@@ -9,6 +9,16 @@ FROM php:$PHP_VERSION-fpm-alpine
 ARG PORT=9001
 ARG PUBLIC_DIR=public
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+  vim \
+  libzip-dev \
+  unzip
+
+# Install PHP Extensions
+RUN docker-php-ext-install zip \
+  && docker-php-ext-install opcache \
+  && docker-php-ext-enable opcache
+
 ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
