@@ -21,8 +21,8 @@ ARG PUBLIC_DIR=public
 ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
-ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo"
-ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar python3 py-pip pcre-dev rabbitmq-c-dev icu-dev php7-amqp"
+ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor pcre linux-headers python3 ca-certificates gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo jpegoptim optipng pngquant gifsicle"
+ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev php7-amqp"
 ENV PICKLE_PACKAGES="amqp apcu ast"
 ENV PECL_PACKAGES="redis"
 ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd"
