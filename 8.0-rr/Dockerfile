@@ -1,9 +1,16 @@
 ARG PHP_VERSION=8.0
+ARG RR_VERSION=2.1.1
+ARG RR_IMAGE=spiralscout/roadrunner:${RR_VERSION}
+
+# -----------------------------------------------------
+# Roadrunner
+# -----------------------------------------------------
+FROM ${RR_IMAGE} as rr
 
 # -----------------------------------------------------
 # App Itself
 # -----------------------------------------------------
-FROM php:$PHP_VERSION-alpine
+FROM php:${PHP_VERSION}-cli-alpine
 
 ARG PORT=9001
 ARG PUBLIC_DIR=public
@@ -27,7 +34,10 @@ WORKDIR /app
 # Copying manifest files to host
 COPY ./8.0/manifest /
 
-# Composer install
+# Copy RoadRunner
+COPY --from=rr /usr/bin/rr /usr/bin/rr
+
+# Copy Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Install Packages
