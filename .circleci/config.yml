@@ -14,7 +14,7 @@ workflows:
           image: dlxmedia/docker-symfony
           tag: "8.0"
           dockerfile: "8.0/Dockerfile"
-          extra_build_args: '--build-arg PHP_VERSION=8.0'
+          extra_build_args: '--build-arg PHP_VERSION=8.0.3'
       - docker/publish:
           image: dlxmedia/docker-symfony
           tag: "8.0-rr"
