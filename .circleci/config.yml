@@ -41,6 +41,9 @@ jobs:
       - setup_remote_docker:
           version: 20.10.2
           docker_layer_caching: true
+      - run:
+          name: Install Docker client
+          command: apk add docker-cli
       - run: |
           TAG=7.4
           docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=7.4 ./7.4/Dockerfile
