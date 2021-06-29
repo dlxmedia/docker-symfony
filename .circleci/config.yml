@@ -41,9 +41,8 @@ jobs:
       - setup_remote_docker:
           version: 20.10.2
           docker_layer_caching: true
-      - run: docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
       - run: |
           TAG=7.4
           docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=7.4 ./7.4/Dockerfile
-          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
           docker push dlxmedia/docker-symfony:$TAG
