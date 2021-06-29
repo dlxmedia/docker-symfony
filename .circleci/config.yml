@@ -1,89 +1,27 @@
 version: 2.1
-jobs:
-  build-74:
-    docker:
-      - image: dlxmedia/docker-symfony
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_TOKEN
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.6
-          docker_layer_caching: true
-      - run:
-          name: Install Docker client
-          command: apk add docker-cli
-      - run: docker --version
-      - run: |
-          TAG=7.4
-          docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=7.4 ./7.4/
-          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          docker push dlxmedia/docker-symfony:$TAG
-  build-80:
-    docker:
-      - image: dlxmedia/docker-symfony
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_TOKEN
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.6
-          docker_layer_caching: true
-      - run:
-          name: Install Docker client
-          command: apk add docker-cli
-      - run: |
-          TAG=8.0
-          docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=8.0 ./8.0/
-          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          docker push dlxmedia/docker-symfony:$TAG
-  build-80-rr:
-    docker:
-      - image: dlxmedia/docker-symfony
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_TOKEN
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.6
-          docker_layer_caching: true
-      - run:
-          name: Install Docker client
-          command: apk add docker-cli
-      - run: |
-          TAG=8.0-rr
-          docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=8.0 ./8.0-rr/
-          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          docker push dlxmedia/docker-symfony:$TAG
-  build-latest:
-    docker:
-      - image: dlxmedia/docker-symfony
-        auth:
-          username: $DOCKERHUB_USERNAME
-          password: $DOCKERHUB_TOKEN
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.6
-          docker_layer_caching: true
-      - run:
-          name: Install Docker client
-          command: apk add docker-cli
-      - run: docker --version
-      - run: |
-          TAG=latest
-          docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=8.0 ./8.0/
-          echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
-          docker push dlxmedia/docker-symfony:$TAG
-
+orbs:
+  docker: circleci/docker@1.6.0
 workflows:
-  version: 2
-  test:
+  build_and_publish_docker_image:
     jobs:
-      - build-74
-      - build-80
-      - build-80-rr
-      - build-latest
+      - docker/publish:
+          image: dlxmedia/docker-symfony
+          tag: "7.4"
+          dockerfile: "7.4/Dockerfile"
+          extra_build_args: '--build-arg PHP_VERSION=7.4'
+      - docker/publish:
+          image: dlxmedia/docker-symfony
+          tag: "8.0"
+          dockerfile: "8.0/Dockerfile"
+          extra_build_args: '--build-arg PHP_VERSION=8.0'
+      - docker/publish:
+          image: dlxmedia/docker-symfony
+          tag: "8.0-rr"
+          dockerfile: "8.0-rr/Dockerfile"
+          extra_build_args: '--build-arg PHP_VERSION=8.0'
+      - docker/publish:
+          image: dlxmedia/docker-symfony
+          tag: latest
+          dockerfile: "8.0/Dockerfile"
+          extra_build_args: '--build-arg PHP_VERSION=8.0'
+
