@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build-7.4:
+  build-74:
     docker:
       - image: dlxmedia/docker-symfony
         auth:
@@ -19,7 +19,7 @@ jobs:
           docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=7.4 ./7.4/
           echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
           docker push dlxmedia/docker-symfony:$TAG
-  build-8.0:
+  build-80:
     docker:
       - image: dlxmedia/docker-symfony
         auth:
@@ -38,7 +38,7 @@ jobs:
           docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=8.0 ./8.0/
           echo $DOCKERHUB_TOKEN | docker login -u $DOCKERHUB_USERNAME --password-stdin
           docker push dlxmedia/docker-symfony:$TAG
-  build-8.0-rr:
+  build-80-rr:
     docker:
       - image: dlxmedia/docker-symfony
         auth:
@@ -81,7 +81,7 @@ workflows:
   version: 2
   test:
     jobs:
-      - build-7.4
-      - build-8.0
-      - build-8.0-rr
+      - build-74
+      - build-80
+      - build-80-rr
       - build-latest
