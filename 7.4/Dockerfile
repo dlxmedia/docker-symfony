@@ -35,7 +35,7 @@ ENV COMPOSER_CACHE_DIR /tmp
 WORKDIR /app
 
 # Copying manifest files to host
-COPY ./7.4/manifest /
+COPY manifest /
 
 # Caddy
 COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
