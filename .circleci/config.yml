@@ -1,27 +1,49 @@
 # https://circleci.com/orbs/registry/orb/circleci/docker
+#version: 2.1
+#orbs:
+#  docker: circleci/docker@1.6.0
+#workflows:
+#  build_and_publish_docker_image:
+#    jobs:
+#      - docker/publish:
+#          image: dlxmedia/docker-symfony
+#          tag: "7.4"
+#          dockerfile: "7.4/Dockerfile"
+#          extra_build_args: '--build-arg PHP_VERSION=7.4'
+#      - docker/publish:
+#          image: dlxmedia/docker-symfony
+#          tag: "8.0"
+#          dockerfile: "8.0/Dockerfile"
+#          extra_build_args: '--build-arg PHP_VERSION=8.0'
+#      - docker/publish:
+#          image: dlxmedia/docker-symfony
+#          tag: "8.0-rr"
+#          dockerfile: "8.0-rr/Dockerfile"
+#          extra_build_args: '--build-arg PHP_VERSION=8.0'
+#      - docker/publish:
+#          image: dlxmedia/docker-symfony
+#          tag: latest
+#          dockerfile: "8.0/Dockerfile"
+#          extra_build_args: '--build-arg PHP_VERSION=8.0'
+#
+#
+
 version: 2.1
-orbs:
-  docker: circleci/docker@1.6.0
-workflows:
-  build_and_publish_docker_image:
-    jobs:
-      - docker/publish:
-          image: dlxmedia/docker-symfony
-          tag: "7.4"
-          dockerfile: "7.4/Dockerfile"
-          extra_build_args: '--build-arg PHP_VERSION=7.4'
-      - docker/publish:
-          image: dlxmedia/docker-symfony
-          tag: "8.0"
-          dockerfile: "8.0/Dockerfile"
-          extra_build_args: '--build-arg PHP_VERSION=8.0'
-      - docker/publish:
-          image: dlxmedia/docker-symfony
-          tag: "8.0-rr"
-          dockerfile: "8.0-rr/Dockerfile"
-          extra_build_args: '--build-arg PHP_VERSION=8.0'
-      - docker/publish:
-          image: dlxmedia/docker-symfony
-          tag: latest
-          dockerfile: "8.0/Dockerfile"
-          extra_build_args: '--build-arg PHP_VERSION=8.0'
+jobs:
+  build:
+    docker:
+      - image: dlxmedia/docker-symfony
+        auth:
+          username: $DOCKERHUB_USERNAME
+          password: $DOCKERHUB_TOKEN
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.2
+          docker_layer_caching: true
+      - run: docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_TOKEN
+      - run: |
+          TAG=7.4
+          docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=7.4 ./7.4/Dockerfile
+          echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+          docker push dlxmedia/docker-symfony:$TAG
