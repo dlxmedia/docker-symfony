@@ -32,7 +32,7 @@ ENV COMPOSER_CACHE_DIR /tmp
 WORKDIR /app
 
 # Copying manifest files to host
-COPY manifest /
+COPY ./8.0-rr/manifest /
 
 # Copy RoadRunner
 COPY --from=rr /usr/bin/rr /usr/bin/rr
