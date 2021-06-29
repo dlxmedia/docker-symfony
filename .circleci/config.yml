@@ -2,7 +2,7 @@ version: 2.1
 orbs:
   docker: circleci/docker@1.6.0
 workflows:
-  build_and_publish_docker_image:
+  build_and_publish:
     jobs:
       - docker/publish:
           image: dlxmedia/docker-symfony
