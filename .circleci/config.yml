@@ -9,7 +9,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.2
+          version: 20.10.6
           docker_layer_caching: true
       - run:
           name: Install Docker client
@@ -29,7 +29,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.2
+          version: 20.10.6
           docker_layer_caching: true
       - run:
           name: Install Docker client
@@ -48,7 +48,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.2
+          version: 20.10.6
           docker_layer_caching: true
       - run:
           name: Install Docker client
@@ -67,7 +67,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.2
+          version: 20.10.6
           docker_layer_caching: true
       - run:
           name: Install Docker client
