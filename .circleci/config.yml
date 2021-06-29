@@ -14,6 +14,7 @@ jobs:
       - run:
           name: Install Docker client
           command: apk add docker-cli
+      - run: docker --version
       - run: |
           TAG=7.4
           docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=7.4 ./7.4/
@@ -71,6 +72,7 @@ jobs:
       - run:
           name: Install Docker client
           command: apk add docker-cli
+      - run: docker --version
       - run: |
           TAG=latest
           docker build -t dlxmedia/docker-symfony:$TAG --build-arg PHP_VERSION=8.0 ./8.0/
@@ -82,6 +84,6 @@ workflows:
   test:
     jobs:
       - build-74
-      - build-80
-      - build-80-rr
-      - build-latest
+#      - build-80
+#      - build-80-rr
+#      - build-latest
