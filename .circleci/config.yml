@@ -84,6 +84,6 @@ workflows:
   test:
     jobs:
       - build-74
-#      - build-80
-#      - build-80-rr
-#      - build-latest
+      - build-80
+      - build-80-rr
+      - build-latest
