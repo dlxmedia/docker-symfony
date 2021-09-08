@@ -63,6 +63,7 @@ RUN yes '' | pecl install -f $PECL_PACKAGES
 RUN docker-php-ext-enable $PICKLE_PACKAGES $PECL_PACKAGES
 
 # Imagick from master @TODO upgrade to release version when php8 support is ready
+ENV EXT_IMAGICK_VERSION=master
 RUN docker-php-source extract \
     && git clone --branch $EXT_IMAGICK_VERSION --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && cd /usr/src/php/ext/imagick && git submodule update --init \
