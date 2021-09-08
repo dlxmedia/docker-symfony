@@ -21,10 +21,10 @@ ARG PUBLIC_DIR=public
 ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
-ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libxml2-dev libacl libmagic imagemagick-dev imagemagick jpegoptim optipng pngquant gifsicle"
+ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libxml2-dev libacl libheif libde265 libmagic imagemagick-dev imagemagick jpegoptim optipng pngquant gifsicle"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PECL_PACKAGES="redis apcu ast"
-ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl"
+ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -76,7 +76,6 @@ RUN docker-php-source extract \
 # Imagick from master @TODO upgrade to release version when php8 support is ready
 ENV EXT_IMAGICK_VERSION=master
 RUN docker-php-source extract \
-    && apk -Uu add git rabbitmq-c-dev \
     && git clone --branch $EXT_IMAGICK_VERSION --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
     && cd /usr/src/php/ext/imagick && git submodule update --init \
     && docker-php-ext-install imagick \
