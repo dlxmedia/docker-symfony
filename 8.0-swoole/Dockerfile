@@ -1,8 +1,7 @@
-ARG PHP_VERSION=8.0
 # -----------------------------------------------------
 # App
 # -----------------------------------------------------
-FROM php:${PHP_VERSION}-cli-alpine3.13
+FROM phpswoole/swoole:php8.0-alpine
 
 ARG PORT=9001
 ARG PUBLIC_DIR=public
@@ -14,7 +13,7 @@ ENV REQUIRED_PACKAGES="git make openssl-dev zlib-dev libzip-dev zip curl curl-de
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PICKLE_PACKAGES="amqp"
 ENV PECL_PACKAGES="redis apcu ast"
-ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
+ENV EXT_PACKAGES="zip sockets pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -52,16 +51,8 @@ RUN yes '' | pecl install -f $PECL_PACKAGES
 RUN docker-php-ext-enable $PICKLE_PACKAGES $PECL_PACKAGES
 
 # Swoole
-RUN pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole
-RUN docker-php-ext-enable swoole
-
-# Imagick from master @TODO upgrade to release version when php8 support is ready
-ENV EXT_IMAGICK_VERSION=master
-RUN docker-php-source extract \
-    && git clone --branch $EXT_IMAGICK_VERSION --depth 1 https://github.com/Imagick/imagick.git /usr/src/php/ext/imagick \
-    && cd /usr/src/php/ext/imagick && git submodule update --init \
-    && docker-php-ext-install imagick \
-    && docker-php-source delete
+#RUN pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole
+#RUN docker-php-ext-enable swoole
 
 # MaxMind
 RUN apk add --no-cache libmaxminddb \
