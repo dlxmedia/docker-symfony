@@ -2,7 +2,7 @@ ARG PHP_VERSION=8.0
 # -----------------------------------------------------
 # App
 # -----------------------------------------------------
-FROM php:${PHP_VERSION}-cli-alpine
+FROM php:${PHP_VERSION}-cli-alpine3.13
 
 ARG PORT=9001
 ARG PUBLIC_DIR=public
@@ -12,9 +12,9 @@ ENV PUBLIC_DIR=$PUBLIC_DIR
 
 ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo jpegoptim optipng pngquant gifsicle libheif libde265 libmagic imagemagick-dev imagemagick"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
-ENV PICKLE_PACKAGES="amqp"
+#ENV PICKLE_PACKAGES="amqp"
 ENV PECL_PACKAGES="swoole redis apcu ast"
-ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
+ENV EXT_PACKAGES="amqp zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -46,10 +46,10 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install $EXT_PACKAGES
 
 # Install Pecl Packages
-RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
-RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
+#RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
+#RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
 RUN yes '' | pecl install -f $PECL_PACKAGES
-RUN docker-php-ext-enable $PICKLE_PACKAGES $PECL_PACKAGES
+RUN docker-php-ext-enable $PECL_PACKAGES
 
 # Imagick from master @TODO upgrade to release version when php8 support is ready
 ENV EXT_IMAGICK_VERSION=master
