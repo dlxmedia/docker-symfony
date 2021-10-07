@@ -14,7 +14,7 @@ ENV REQUIRED_PACKAGES="git make zlib-dev libzip-dev zip curl supervisor python3 
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PICKLE_PACKAGES="amqp"
 ENV PECL_PACKAGES="swoole redis apcu ast"
-ENV EXT_PACKAGES="amqp zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
+ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
