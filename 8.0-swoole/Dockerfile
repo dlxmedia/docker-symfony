@@ -3,10 +3,8 @@
 # -----------------------------------------------------
 FROM phpswoole/swoole:php8.0-alpine
 
-ARG PORT=9001
 ARG PUBLIC_DIR=public
 
-ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
 ENV REQUIRED_PACKAGES="git make openssl-dev zlib-dev libzip-dev zip curl curl-dev supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo jpegoptim optipng pngquant gifsicle libheif libde265 libmagic imagemagick-dev imagemagick"
