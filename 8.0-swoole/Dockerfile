@@ -70,7 +70,7 @@ ENV EXT_POSTGRES_VERSION=master
 RUN git clone --branch $EXT_POSTGRES_VERSION --depth 1 https://github.com/swoole/ext-postgresql.git  \
     && ( \
       cd ext-postgresql \
-      && sed -i "s/#include <postgresql\/libpq-fe.h>/#include <\/usr\/include\/libpq-fe.h>/" php_swoole_postgresql.h
+      && sed -i "s/#include <postgresql\/libpq-fe.h>/#include <\/usr\/include\/libpq-fe.h>/" php_swoole_postgresql.h \
       && phpize \
       && ./configure \
       && make \
