@@ -48,17 +48,6 @@ RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
 RUN yes '' | pecl install -f $PECL_PACKAGES
 RUN docker-php-ext-enable $PICKLE_PACKAGES $PECL_PACKAGES
 
-# Swoole
-#RUN pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole
-#RUN docker-php-ext-enable swoole
-RUN git clone git@github.com:swoole/ext-postgresql.git
-ENV EXT_POSTGRES_VERSION=master
-RUN docker-php-source extract \
-    && git clone --branch master --depth 1 https://github.com/swoole/ext-postgresql.git /usr/src/php/ext/swoole_postgresql \
-    && cd /usr/src/php/ext/swoole_postgresql && git submodule update --init \
-    && docker-php-ext-install swoole_postgresql \
-    && docker-php-source delete
-
 # MaxMind
 RUN apk add --no-cache libmaxminddb \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git libmaxminddb-dev \
@@ -72,6 +61,22 @@ RUN apk add --no-cache libmaxminddb \
     ) \
     && rm -r MaxMind-DB-Reader-php \
     && docker-php-ext-enable maxminddb
+
+# Swoole
+#RUN pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole
+#RUN docker-php-ext-enable swoole
+RUN git clone git@github.com:swoole/ext-postgresql.git
+ENV EXT_POSTGRES_VERSION=master
+RUN git clone --branch $EXT_POSTGRES_VERSION --depth 1 https://github.com/swoole/ext-postgresql.git  \
+    && ( \
+      cd ext-postgresql \
+      && phpize \
+      && ./configure \
+      && make \
+      && make install \
+    )
+    && rm -r ext-postgresql \
+    && docker-php-source delete \
 
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES
