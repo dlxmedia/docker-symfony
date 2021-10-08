@@ -78,7 +78,7 @@ RUN git clone --branch $EXT_POSTGRES_VERSION --depth 1 https://github.com/swoole
     ) \
     && rm -r ext-postgresql \
     && docker-php-source delete \
-    && docker-php-ext-enable ext-postgresql
+    && docker-php-ext-enable swoole_postgresql
 
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES
