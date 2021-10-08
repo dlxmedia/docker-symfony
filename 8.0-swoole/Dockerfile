@@ -65,7 +65,6 @@ RUN apk add --no-cache libmaxminddb \
 # Swoole
 #RUN pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole
 #RUN docker-php-ext-enable swoole
-RUN git clone git@github.com:swoole/ext-postgresql.git
 ENV EXT_POSTGRES_VERSION=master
 RUN git clone --branch $EXT_POSTGRES_VERSION --depth 1 https://github.com/swoole/ext-postgresql.git  \
     && ( \
@@ -77,6 +76,7 @@ RUN git clone --branch $EXT_POSTGRES_VERSION --depth 1 https://github.com/swoole
     ) \
     && rm -r ext-postgresql \
     && docker-php-source delete \
+    && docker-php-ext-enable ext-postgresql
 
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES
