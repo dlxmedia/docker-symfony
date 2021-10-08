@@ -74,7 +74,7 @@ RUN git clone --branch $EXT_POSTGRES_VERSION --depth 1 https://github.com/swoole
       && ./configure \
       && make \
       && make install \
-    )
+    ) \
     && rm -r ext-postgresql \
     && docker-php-source delete \
 
