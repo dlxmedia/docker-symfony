@@ -64,10 +64,6 @@ RUN docker-php-ext-install $EXT_PACKAGES
 RUN yes '' | pecl install -f $PECL_PACKAGES
 RUN docker-php-ext-enable $PECL_PACKAGES
 
-# Swoole
-RUN pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole
-RUN docker-php-ext-enable swoole
-
 # AMQP from master @TODO upgrade to release version when php8 support is ready
 ENV EXT_AMQP_VERSION=master
 RUN docker-php-source extract \
