@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.0
+ARG PHP_VERSION=8.1
 ARG CADDY_VERSION=2
 
 # -----------------------------------------------------
@@ -34,7 +34,7 @@ ENV COMPOSER_CACHE_DIR /tmp
 WORKDIR /app
 
 # Copying manifest files to host
-COPY ./8.0/manifest /
+COPY ./8.1/manifest /
 
 # Caddy
 COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
