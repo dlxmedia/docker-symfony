@@ -11,6 +11,18 @@ RUN xcaddy build
 FROM caddy:$CADDY_VERSION
 
 # -----------------------------------------------------
+# Snowflake build
+# -----------------------------------------------------
+FROM golang:1.16-alpine as snowflake
+
+WORKDIR /app
+
+RUN apk add git
+
+RUN git clone https://github.com/dlxmedia/snowflake-json .
+RUN go mod download && CGO_ENABLED=0 GOOS=linux go build -a -o snowflake .
+
+# -----------------------------------------------------
 # App Itself
 # -----------------------------------------------------
 FROM php:$PHP_VERSION-fpm-alpine3.13
@@ -35,6 +47,9 @@ WORKDIR /app
 
 # Copying manifest files to host
 COPY ./8.1/manifest /
+
+# Snowflake
+COPY --from=snowflake /app/snowflake /usr/local/bin/snowflake
 
 # Caddy
 COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
