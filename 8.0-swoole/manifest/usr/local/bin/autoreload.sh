@@ -1,16 +1,20 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 set -e
 
-if [[ -z "${ROOT_DIR}" ]] ; then
+if [ -z "${ROOT_DIR}" ] ;
+then
     ROOT_DIR=/var/www
 fi
-if [[ ! -d "${ROOT_DIR}" ]] ; then
+
+if [ ! -d "${ROOT_DIR}" ];
+then
     echo "Error: path '${ROOT_DIR}' does not point to a directory."
     exit 1
 fi
 
-if [[ -z "${AUTORELOAD_PROGRAMS}" ]] ; then
+if [ -z "${AUTORELOAD_PROGRAMS}" ];
+then
     AUTORELOAD_PROGRAMS=all
 fi
 
@@ -18,11 +22,13 @@ fi
 # any files under the root directory (/var/www by default) is changed; otherwise, reload only when PHP file(s) are
 # changed.
 while true ; do
-    while read file ; do
-        if [[ "${AUTORELOAD_ANY_FILES,,}" =~ ^(1|true|yes|y)$ ]] || [[ "php" == "${file##*.}" ]] ; then
+    inotifywait -r -q -m --format "%f" -e close_write,create,delete,modify,move "${ROOT_DIR}" |
+    while read -r file; do
+        if [ "${AUTORELOAD_ANY_FILES}" = "1" ] || [ "php" = "${file##*.}" ] ; then
+            echo "${file} updated"
             break
         fi
-    done < <(inotifywait -r -q -m --format "%f" -e close_write,create,delete,modify,move "${ROOT_DIR}")
+    done
 
     supervisorctl signal TERM ${AUTORELOAD_PROGRAMS}
     sleep 2
