@@ -26,10 +26,9 @@ while true ; do
     while read -r file; do
         if [ "${AUTORELOAD_ANY_FILES}" = "1" ] || [ "php" = "${file##*.}" ] ; then
             echo "${file} updated"
+            supervisorctl signal TERM ${AUTORELOAD_PROGRAMS}
+            sleep 2
             break
         fi
     done
-
-    supervisorctl signal TERM ${AUTORELOAD_PROGRAMS}
-    sleep 2
 done
