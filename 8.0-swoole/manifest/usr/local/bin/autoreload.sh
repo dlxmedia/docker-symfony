@@ -28,7 +28,6 @@ while true ; do
             echo "${file} updated"
             supervisorctl signal TERM ${AUTORELOAD_PROGRAMS}
             sleep 2
-            break
         fi
     done
 done
