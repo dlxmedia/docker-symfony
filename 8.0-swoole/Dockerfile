@@ -1,4 +1,16 @@
 # -----------------------------------------------------
+# Snowflake build
+# -----------------------------------------------------
+FROM golang:1.16-alpine as snowflake
+
+WORKDIR /app
+
+RUN apk add git
+
+RUN git clone https://github.com/dlxmedia/snowflake-json .
+RUN go mod download && CGO_ENABLED=0 GOOS=linux go build -a -o snowflake .
+
+# -----------------------------------------------------
 # App
 # -----------------------------------------------------
 FROM phpswoole/swoole:4.8.0-php8.0-alpine
@@ -22,6 +34,9 @@ WORKDIR /app
 
 # Copying manifest files to host
 COPY ./8.0-swoole/manifest /
+
+# Snowflake
+COPY --from=snowflake /app/snowflake /usr/local/bin/snowflake
 
 # Copy Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
