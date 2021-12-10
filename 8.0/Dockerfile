@@ -31,7 +31,7 @@ RUN go mod download && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build 
 # -----------------------------------------------------
 # App Itself
 # -----------------------------------------------------
-FROM php:$PHP_VERSION-fpm-alpine3.13
+FROM --platform=$BUILDPLATFORM php:$PHP_VERSION-fpm-alpine3.13
 
 ARG PORT=9001
 ARG PUBLIC_DIR=public
