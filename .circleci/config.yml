@@ -7,19 +7,19 @@ workflows:
     jobs:
       - build-and-push-8.0:
           executor: docker/docker
-            steps:
-                - setup_remote_docker
-                - checkout
-                - docker-buildx/install
-                - docker/check
-                - docker/build:
-                    cache_from: 'dlxmedia/docker-symfony:8.0'
-                    image: dlxmedia/docker-symfony
-                    dockerfile: "8.0/Dockerfile"
-                    extra_build_args: '--platform linux/amd64,linux/arm64 --build-arg PHP_VERSION=8.0'
-                - docker/push:
-                    image: dlxmedia/docker-symfony
-                    tag: "8.0"
+          steps:
+            - setup_remote_docker
+            - checkout
+            - docker-buildx/install
+            - docker/check
+            - docker/build:
+                cache_from: 'dlxmedia/docker-symfony:8.0'
+                image: dlxmedia/docker-symfony
+                dockerfile: "8.0/Dockerfile"
+                extra_build_args: '--platform linux/amd64,linux/arm64 --build-arg PHP_VERSION=8.0'
+            - docker/push:
+                image: dlxmedia/docker-symfony
+                tag: "8.0"
 #      - docker/publish:
 #          image: dlxmedia/docker-symfony
 #          tag: "8.1"
