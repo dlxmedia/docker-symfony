@@ -1,24 +1,32 @@
 ARG PHP_VERSION=8.0
 ARG CADDY_VERSION=2
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 
 # -----------------------------------------------------
 # Caddy Install
 # -----------------------------------------------------
-FROM caddy:$CADDY_VERSION-builder AS builder
+FROM --platform=$BUILDPLATFORM caddy:$CADDY_VERSION-builder AS builder
 
-RUN xcaddy build
+ARG TARGETOS
+ARG TARGETARCH
+
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH xcaddy build
 
 # -----------------------------------------------------
 # Snowflake build
 # -----------------------------------------------------
-FROM golang:1.16-alpine as snowflake
+FROM --platform=$BUILDPLATFORM golang:1.17-alpine as snowflake
+
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /app
 
 RUN apk add git
 
 RUN git clone https://github.com/dlxmedia/snowflake-json .
-RUN go mod download && CGO_ENABLED=0 GOOS=linux go build -a -o snowflake .
+RUN go mod download && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -o snowflake .
 
 # -----------------------------------------------------
 # App Itself
