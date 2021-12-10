@@ -4,29 +4,29 @@ orbs:
 workflows:
   build_and_publish:
     jobs:
-      - docker/publish:
-          image: dlxmedia/docker-symfony
-          tag: "8.0"
-          dockerfile: "8.0/Dockerfile"
-          extra_build_args: '--build-arg PHP_VERSION=8.0'
+#      - docker/publish:
+#          image: dlxmedia/docker-symfony
+#          tag: "8.0"
+#          dockerfile: "8.0/Dockerfile"
+#          extra_build_args: '--build-arg PHP_VERSION=8.0'
       - docker/publish:
           image: dlxmedia/docker-symfony
           tag: "8.1"
           dockerfile: "8.1/Dockerfile"
           extra_build_args: '--build-arg PHP_VERSION=8.1'
-      - docker/publish:
-          image: dlxmedia/docker-symfony
-          tag: "8.0-rr"
-          dockerfile: "8.0-rr/Dockerfile"
-          extra_build_args: '--build-arg PHP_VERSION=8.0'
+#      - docker/publish:
+#          image: dlxmedia/docker-symfony
+#          tag: "8.0-rr"
+#          dockerfile: "8.0-rr/Dockerfile"
+#          extra_build_args: '--build-arg PHP_VERSION=8.0'
       - docker/publish:
           image: dlxmedia/docker-symfony
           tag: "8.1-swoole"
           dockerfile: "8.1-swoole/Dockerfile"
           extra_build_args: ''
-      - docker/publish:
-          image: dlxmedia/docker-symfony
-          tag: latest
-          dockerfile: "8.0/Dockerfile"
-          extra_build_args: '--build-arg PHP_VERSION=8.0'
+#      - docker/publish:
+#          image: dlxmedia/docker-symfony
+#          tag: latest
+#          dockerfile: "8.0/Dockerfile"
+#          extra_build_args: '--build-arg PHP_VERSION=8.0'
 

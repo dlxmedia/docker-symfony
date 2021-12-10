@@ -25,7 +25,7 @@ RUN go mod download && CGO_ENABLED=0 GOOS=linux go build -a -o snowflake .
 # -----------------------------------------------------
 # App Itself
 # -----------------------------------------------------
-FROM php:$PHP_VERSION-fpm-alpine3.13
+FROM php:$PHP_VERSION-fpm-alpine
 
 ARG PORT=9001
 ARG PUBLIC_DIR=public
