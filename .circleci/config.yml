@@ -20,7 +20,9 @@ jobs:
             docker context create xbuilder
             docker buildx create xbuilder --name xbuilder --use
             docker buildx inspect --bootstrap
-      - docker/check
+      - run:
+          name: Docker login
+          command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin &> /dev/null || exit 1
       - run:
           name: Build and push all platforms
           command: |
