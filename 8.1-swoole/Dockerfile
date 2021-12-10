@@ -23,7 +23,7 @@ ENV REQUIRED_PACKAGES="git make openssl-dev zlib-dev libzip-dev zip curl curl-de
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PICKLE_PACKAGES="amqp"
 ENV PECL_PACKAGES="redis apcu ast inotify"
-ENV EXT_PACKAGES="sockets pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
+ENV EXT_PACKAGES="zip sockets pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -55,13 +55,13 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 # Install Non-Pecl Packages
-RUN docker-php-ext-install $EXT_PACKAGES
+RUN /bin/sh -c docker-php-ext-enable $EXT_PACKAGES
 
 # Install Pecl Packages
 RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
 RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
 RUN yes '' | pecl install -f $PECL_PACKAGES
-RUN docker-php-ext-enable $PICKLE_PACKAGES $PECL_PACKAGES
+RUN /bin/sh -c docker-php-ext-enable $PICKLE_PACKAGES $PECL_PACKAGES
 
 # MaxMind
 RUN apk add --no-cache libmaxminddb \
@@ -75,7 +75,7 @@ RUN apk add --no-cache libmaxminddb \
       && make install \
     ) \
     && rm -r MaxMind-DB-Reader-php \
-    && docker-php-ext-enable maxminddb
+    && /bin/sh -c docker-php-ext-enable maxminddb
 
 # Swoole autoreload
 RUN chmod +x /usr/local/bin/autoreload.sh
@@ -93,7 +93,7 @@ RUN git clone --branch $EXT_POSTGRES_VERSION --depth 1 https://github.com/swoole
     ) \
     && rm -r ext-postgresql \
     && docker-php-source delete \
-    && docker-php-ext-enable swoole_postgresql
+    && /bin/sh -c docker-php-ext-enable swoole_postgresql
 
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES

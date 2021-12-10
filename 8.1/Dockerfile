@@ -36,7 +36,7 @@ ENV PUBLIC_DIR=$PUBLIC_DIR
 ENV REQUIRED_PACKAGES="git make openssl-dev zlib-dev libzip-dev zip curl curl-dev libpq supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libxml2-dev libacl libheif libde265 libmagic imagemagick-dev imagemagick jpegoptim optipng pngquant gifsicle"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PECL_PACKAGES="redis apcu ast"
-ENV EXT_PACKAGES="sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
+ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath opcache mbstring iconv gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -71,17 +71,13 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 # Install Non-Pecl Packages
-RUN docker-php-ext-install $EXT_PACKAGES
+RUN /bin/sh -c docker-php-ext-enable $EXT_PACKAGES
 
 # Install Pecl Packages
 #RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
 #RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
 RUN yes '' | pecl install -f $PECL_PACKAGES
-RUN docker-php-ext-enable $PECL_PACKAGES
-
-# Swoole
-RUN pecl install -D 'enable-sockets="yes" enable-openssl="yes" enable-http2="yes" enable-mysqlnd="yes" enable-swoole-json="yes" enable-swoole-curl="yes" enable-cares="yes"' swoole
-RUN docker-php-ext-enable swoole
+RUN /bin/sh -c docker-php-ext-enable $PECL_PACKAGES
 
 # AMQP from master @TODO upgrade to release version when php8 support is ready
 ENV EXT_AMQP_VERSION=master
@@ -112,7 +108,7 @@ RUN apk add --no-cache libmaxminddb \
       && make install \
     ) \
     && rm -r MaxMind-DB-Reader-php \
-    && docker-php-ext-enable maxminddb
+    && /bin/sh -c docker-php-ext-enable maxminddb
 
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES
