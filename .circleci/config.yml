@@ -1,7 +1,4 @@
 version: 2.1
-orbs:
-  docker-buildx: sensu/docker-buildx@1.1.1
-  docker: circleci/docker@2.0.1
 
 jobs:
   build-and-push:
@@ -22,7 +19,8 @@ jobs:
             docker buildx inspect --bootstrap
       - run:
           name: Docker login
-          command: echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin &> /dev/null || exit 1
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_LOGIN" --password-stdin
       - run:
           name: Build and push all platforms
           command: |
