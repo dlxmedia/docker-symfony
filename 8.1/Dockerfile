@@ -71,6 +71,7 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 # Install Non-Pecl Packages
+RUN php -i
 RUN /bin/sh -c docker-php-ext-enable $EXT_PACKAGES
 
 # Install Pecl Packages
