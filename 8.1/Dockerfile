@@ -37,7 +37,7 @@ ENV REQUIRED_PACKAGES="git make openssl-dev zlib-dev libzip-dev zip curl curl-de
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PECL_PACKAGES="redis apcu ast"
 #ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath gettext intl exif gd pcntl sysvmsg sysvsem sysvshm"
-ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql gd pcntl sysvmsg sysvsem sysvshm"
+ENV EXT_PACKAGES="gd pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -73,13 +73,13 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
 # Install Non-Pecl Packages
 RUN php -i
-RUN /bin/sh -c docker-php-ext-enable $EXT_PACKAGES
+RUN docker-php-ext-enable $EXT_PACKAGES
 
 # Install Pecl Packages
 #RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
 #RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
 RUN yes '' | pecl install -f $PECL_PACKAGES
-RUN /bin/sh -c docker-php-ext-enable $PECL_PACKAGES
+RUN docker-php-ext-enable $PECL_PACKAGES
 
 # AMQP from master @TODO upgrade to release version when php8 support is ready
 ENV EXT_AMQP_VERSION=master
@@ -110,7 +110,7 @@ RUN apk add --no-cache libmaxminddb \
       && make install \
     ) \
     && rm -r MaxMind-DB-Reader-php \
-    && /bin/sh -c docker-php-ext-enable maxminddb
+    && docker-php-ext-enable maxminddb
 
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES
