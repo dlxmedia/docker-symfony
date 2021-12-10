@@ -1,13 +1,12 @@
 ARG PHP_VERSION=8.0
 ARG CADDY_VERSION=2
-ARG TARGETPLATFORM
-ARG BUILDPLATFORM
 
 # -----------------------------------------------------
 # Caddy Install
 # -----------------------------------------------------
 FROM --platform=$BUILDPLATFORM caddy:$CADDY_VERSION-builder AS builder
-
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 ARG TARGETOS
 ARG TARGETARCH
 
@@ -17,7 +16,8 @@ RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH xcaddy build
 # Snowflake build
 # -----------------------------------------------------
 FROM --platform=$BUILDPLATFORM golang:1.17-alpine as snowflake
-
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
 ARG TARGETOS
 ARG TARGETARCH
 
