@@ -52,7 +52,7 @@ ENV COMPOSER_CACHE_DIR /tmp
 WORKDIR /app
 
 # Copying manifest files to host
-COPY ./8.0/manifest /
+COPY ./manifest /
 
 # Snowflake
 COPY --from=snowflake /app/snowflake /usr/local/bin/snowflake
