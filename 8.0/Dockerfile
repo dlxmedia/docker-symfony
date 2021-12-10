@@ -8,8 +8,6 @@ FROM caddy:$CADDY_VERSION-builder AS builder
 
 RUN xcaddy build
 
-FROM caddy:$CADDY_VERSION
-
 # -----------------------------------------------------
 # Snowflake build
 # -----------------------------------------------------
