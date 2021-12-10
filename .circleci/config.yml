@@ -4,7 +4,7 @@ orbs:
   docker: circleci/docker@2.0.1
 
 jobs:
-  build-and-push-8.0:
+  build-and-push:
     executor: docker/docker
     steps:
       - setup_remote_docker
@@ -23,7 +23,7 @@ jobs:
 workflows:
   commit:
     jobs:
-      - build-and-push-8.0
+      - build-and-push
 
 
 #workflows:
