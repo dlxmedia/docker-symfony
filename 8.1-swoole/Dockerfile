@@ -13,7 +13,7 @@ RUN go mod download && CGO_ENABLED=0 GOOS=linux go build -a -o snowflake .
 # -----------------------------------------------------
 # App
 # -----------------------------------------------------
-FROM phpswoole/swoole:4.8.0-php8.0-alpine
+FROM openswoole/swoole:4.8.1-php8.1-alpine
 
 ARG PUBLIC_DIR=public
 
@@ -33,7 +33,7 @@ ENV COMPOSER_CACHE_DIR /tmp
 WORKDIR /app
 
 # Copying manifest files to host
-COPY ./8.0-swoole/manifest /
+COPY ./8.1-swoole/manifest /
 
 # Snowflake
 COPY --from=snowflake /app/snowflake /usr/local/bin/snowflake
