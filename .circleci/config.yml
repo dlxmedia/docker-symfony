@@ -6,10 +6,9 @@ commands:
     description: Configure Docker Hub access
     steps:
       - run:
-          name: Configure Docker Hub
+          name: Docker login
           command: |
-            [ -z "$ACCESS_TOKEN" ] && exit 0
-            docker login --username $DOCKER_LOGIN --password=$DOCKER_PASSWORD
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_LOGIN" --password-stdin
 
   install-docker-buildx:
     description: Install Docker Buildx
@@ -62,7 +61,7 @@ jobs:
           command: |
             export TAG=<< parameters.repo >>:<< parameters.tag >>
             docker buildx inspect --bootstrap
-            docker buildx build --progress plain --push -t $TAG --platform linux/amd64,linux/arm64 .
+            docker buildx build --cache-from=<< parameters.repo >>:<< parameters.tag >> --progress plain --push -t $TAG --platform linux/amd64,linux/arm64 .
 
 
 workflows:
