@@ -1,58 +1,83 @@
 version: 2.1
 
+commands:
+
+  configure-dockerhub:
+    description: Configure Docker Hub access
+    steps:
+      - run:
+          name: Configure Docker Hub
+          command: |
+            [ -z "$ACCESS_TOKEN" ] && exit 0
+            docker login --username $DOCKER_LOGIN --password=$DOCKER_PASSWORD
+
+  install-docker-buildx:
+    description: Install Docker Buildx
+    steps:
+      - run:
+          name: Install Docker Buildx
+          command: |
+            mkdir -vp ~/.docker/cli-plugins/
+            curl --silent -L "https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+            chmod a+x ~/.docker/cli-plugins/docker-buildx
+            docker buildx version
+            sudo apt-get update && sudo apt-get install -y binfmt-support qemu-user-static
+            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+            docker run --privileged --rm tonistiigi/binfmt --install arm64
+            docker context create buildcontext
+            docker buildx create buildcontext --use
+
+
 jobs:
-  build-and-push:
+  build-multiarch-container:
+    parameters:
+      resource_size:
+        description: Resource agent size
+        type: string
+        default: medium
+      repo:
+        description: repository without tag, e.g. yourproject/foo
+        type: string
+      tag:
+        description: image tag, e.g. latest
+        type: string
+      directory:
+        description: Directory path without trailing slash relative to repo root
+        type: string
     docker:
-      - image: drpsychick/dind-buildx:latest
+      - image: cimg/base:stable
+    resource_class: << parameters.resource_size >>
     steps:
       - checkout
       - setup_remote_docker:
           version: 20.10.2
+          docker_layer_caching: true
+      - install-docker-buildx
+      - configure-dockerhub
       - run:
-          name: Prepare docker buildx
+          name: Build and push container
+          working_directory: << parameters.directory >>
+          no_output_timeout: 2h
           command: |
-            docker version
-            docker buildx version
-            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-            docker context create xbuilder
-            docker buildx create xbuilder --name xbuilder --use
+            export TAG=<< parameters.repo >>:<< parameters.tag >>
             docker buildx inspect --bootstrap
-      - run:
-          name: Docker login
-          command: |
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_LOGIN" --password-stdin
-      - run:
-          name: Build and push all platforms
-          command: |
-            docker buildx build --progress plain --platform linux/amd64,linux/arm64 \
-            --build-arg PHP_VERSION=8.0 \
-            --tag dlxmedia/docker-symfony:8.0 --push 8.0/
+            docker buildx build --progress plain --push -t $TAG --platform linux/amd64,linux/arm64 .
+
 
 workflows:
-  commit:
+  version: 2
+  build-images:
     jobs:
-      - build-and-push
-
-
-#workflows:
-#      - docker/publish:
-#          image: dlxmedia/docker-symfony
-#          tag: "8.1"
-#          dockerfile: "8.1/Dockerfile"
-#          extra_build_args: '--build-arg PHP_VERSION=8.1'
-#      - docker/publish:
-#          image: dlxmedia/docker-symfony
-#          tag: "8.0-rr"
-#          dockerfile: "8.0-rr/Dockerfile"
-#          extra_build_args: '--build-arg PHP_VERSION=8.0'
-#      - docker/publish:
-#          image: dlxmedia/docker-symfony
-#          tag: "8.1-swoole"
-#          dockerfile: "8.1-swoole/Dockerfile"
-#          extra_build_args: ''
-#      - docker/publish:
-#          image: dlxmedia/docker-symfony
-#          tag: latest
-#          dockerfile: "8.0/Dockerfile"
-#          extra_build_args: '--build-arg PHP_VERSION=8.0'
-
+      - build-multiarch-container:
+          name: docker-symfony-80
+          context:
+            - dockerhub
+            - models
+          repo: dlxmedia/docker-symfony
+          tag: 8.0
+          resource_size: xlarge #could be also medium depend on your project size
+          directory: 8.0 # the directory path that contain your Dockerfile
+          filters:
+            branches:
+              only:
+                - master
