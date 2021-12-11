@@ -1,80 +1,80 @@
-version: 2.1
-
-commands:
-
-  configure-dockerhub:
-    description: Configure Docker Hub access
-    steps:
-      - run:
-          name: Docker login
-          command: |
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_LOGIN" --password-stdin
-
-  install-docker-buildx:
-    description: Install Docker Buildx
-    steps:
-      - run:
-          name: Install Docker Buildx
-          command: |
-            mkdir -vp ~/.docker/cli-plugins/
-            curl --silent -L "https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
-            chmod a+x ~/.docker/cli-plugins/docker-buildx
-            docker buildx version
-            sudo apt-get update && sudo apt-get install -y binfmt-support qemu-user-static
-            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-            docker run --privileged --rm tonistiigi/binfmt --install arm64
-            docker context create buildcontext
-            docker buildx create buildcontext --use
-
-
-jobs:
-  build-multiarch-container:
-    parameters:
-      resource_size:
-        description: Resource agent size
-        type: string
-        default: medium
-      repo:
-        description: repository without tag, e.g. yourproject/foo
-        type: string
-      tag:
-        description: image tag, e.g. latest
-        type: string
-        default: latest
-      directory:
-        description: Directory path without trailing slash relative to repo root
-        type: string
-    docker:
-      - image: cimg/base:stable
-    resource_class: << parameters.resource_size >>
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.2
-          docker_layer_caching: true
-      - install-docker-buildx
-      - configure-dockerhub
-      - run:
-          name: Build and push container
-          working_directory: << parameters.directory >>
-          no_output_timeout: 2h
-          command: |
-            export TAG=<< parameters.repo >>:<< parameters.tag >>
-            docker buildx inspect --bootstrap
-            docker buildx build --cache-from=<< parameters.repo >>:<< parameters.tag >> --progress plain --push -t $TAG --platform linux/amd64,linux/arm64 .
-
-
-workflows:
-  version: 2
-  build-images:
-    jobs:
-      - build-multiarch-container:
-          name: docker-symfony-80
-          repo: dlxmedia/docker-symfony
-          tag: "8.0"
-          resource_size: xlarge #could be also medium depend on your project size
-          directory: "8.0" # the directory path that contain your Dockerfile
-          filters:
-            branches:
-              only:
-                - master
+#version: 2.1
+#
+#commands:
+#
+#  configure-dockerhub:
+#    description: Configure Docker Hub access
+#    steps:
+#      - run:
+#          name: Docker login
+#          command: |
+#            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_LOGIN" --password-stdin
+#
+#  install-docker-buildx:
+#    description: Install Docker Buildx
+#    steps:
+#      - run:
+#          name: Install Docker Buildx
+#          command: |
+#            mkdir -vp ~/.docker/cli-plugins/
+#            curl --silent -L "https://github.com/docker/buildx/releases/download/v0.7.1/buildx-v0.7.1.linux-amd64" > ~/.docker/cli-plugins/docker-buildx
+#            chmod a+x ~/.docker/cli-plugins/docker-buildx
+#            docker buildx version
+#            sudo apt-get update && sudo apt-get install -y binfmt-support qemu-user-static
+#            docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+#            docker run --privileged --rm tonistiigi/binfmt --install arm64
+#            docker context create buildcontext
+#            docker buildx create buildcontext --use
+#
+#
+#jobs:
+#  build-multiarch-container:
+#    parameters:
+#      resource_size:
+#        description: Resource agent size
+#        type: string
+#        default: medium
+#      repo:
+#        description: repository without tag, e.g. yourproject/foo
+#        type: string
+#      tag:
+#        description: image tag, e.g. latest
+#        type: string
+#        default: latest
+#      directory:
+#        description: Directory path without trailing slash relative to repo root
+#        type: string
+#    docker:
+#      - image: cimg/base:stable
+#    resource_class: << parameters.resource_size >>
+#    steps:
+#      - checkout
+#      - setup_remote_docker:
+#          version: 20.10.2
+#          docker_layer_caching: true
+#      - install-docker-buildx
+#      - configure-dockerhub
+#      - run:
+#          name: Build and push container
+#          working_directory: << parameters.directory >>
+#          no_output_timeout: 2h
+#          command: |
+#            export TAG=<< parameters.repo >>:<< parameters.tag >>
+#            docker buildx inspect --bootstrap
+#            docker buildx build --cache-from=<< parameters.repo >>:<< parameters.tag >> --progress plain --push -t $TAG --platform linux/amd64,linux/arm64 .
+#
+#
+#workflows:
+#  version: 2
+#  build-images:
+#    jobs:
+#      - build-multiarch-container:
+#          name: docker-symfony-80
+#          repo: dlxmedia/docker-symfony
+#          tag: "8.0"
+#          resource_size: xlarge #could be also medium depend on your project size
+#          directory: "8.0" # the directory path that contain your Dockerfile
+#          filters:
+#            branches:
+#              only:
+#                - master
