@@ -5,7 +5,7 @@ commands:
   configure-dockerhub:
     description: Configure Docker Hub access
     steps:
-        - run:
+      - run:
           name: Docker login
           command: |
             echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_LOGIN" --password-stdin
