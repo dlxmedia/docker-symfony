@@ -4,7 +4,7 @@ ARG CADDY_VERSION=2
 # -----------------------------------------------------
 # Caddy Install
 # -----------------------------------------------------
-FROM --platform=$BUILDPLATFORM caddy:$CADDY_VERSION-builder AS builder
+FROM caddy:$CADDY_VERSION-builder AS builder
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 ARG TARGETOS
@@ -15,7 +15,7 @@ RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH xcaddy build
 # -----------------------------------------------------
 # Snowflake build
 # -----------------------------------------------------
-FROM --platform=$BUILDPLATFORM golang:1.17-alpine as snowflake
+FROM golang:1.17-alpine as snowflake
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 ARG TARGETOS
@@ -31,7 +31,7 @@ RUN go mod download && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build 
 # -----------------------------------------------------
 # App Itself
 # -----------------------------------------------------
-FROM --platform=$BUILDPLATFORM php:$PHP_VERSION-fpm-alpine3.13
+FROM php:$PHP_VERSION-fpm-alpine3.13
 
 ARG PORT=9001
 ARG PUBLIC_DIR=public
