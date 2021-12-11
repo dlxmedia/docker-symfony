@@ -60,8 +60,9 @@ jobs:
           working_directory: << parameters.directory >>
           no_output_timeout: 2h
           command: |
+            export TAG=<< parameters.repo >>:<< parameters.tag >>
             docker buildx inspect --bootstrap
-            docker buildx build --progress plain --push -t << parameters.tag >> --platform linux/amd64,linux/arm64 .
+            docker buildx build --progress plain --push -t $TAG --platform linux/amd64,linux/arm64 .
 
 
 workflows:
@@ -74,9 +75,9 @@ workflows:
             - dockerhub
             - models
           repo: dlxmedia/docker-symfony
-          tag: 'dlxmedia/docker-symfony:8.0'
+          tag: '8.0'
           resource_size: xlarge #could be also medium depend on your project size
-          directory: 8.0 # the directory path that contain your Dockerfile
+          directory: '8.0' # the directory path that contain your Dockerfile
           filters:
             branches:
               only:
