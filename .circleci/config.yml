@@ -38,10 +38,9 @@ jobs:
       repo:
         description: repository without tag, e.g. yourproject/foo
         type: string
-        default: latest
       tag:
         description: image tag, e.g. latest
-        type: string
+        default: latest
       directory:
         description: Directory path without trailing slash relative to repo root
         type: string
