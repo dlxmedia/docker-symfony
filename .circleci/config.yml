@@ -38,6 +38,7 @@ jobs:
       repo:
         description: repository without tag, e.g. yourproject/foo
         type: string
+        default: latest
       tag:
         description: image tag, e.g. latest
         type: string
@@ -74,7 +75,7 @@ workflows:
             - dockerhub
             - models
           repo: dlxmedia/docker-symfony
-          tag: "8.0"
+          tag: '8.0'
           resource_size: xlarge #could be also medium depend on your project size
           directory: 8.0 # the directory path that contain your Dockerfile
           filters:
