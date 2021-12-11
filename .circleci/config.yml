@@ -71,9 +71,6 @@ workflows:
     jobs:
       - build-multiarch-container:
           name: docker-symfony-80
-          context:
-            - dockerhub
-            - models
           repo: dlxmedia/docker-symfony
           tag: "8.0"
           resource_size: xlarge #could be also medium depend on your project size
