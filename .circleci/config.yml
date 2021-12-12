@@ -77,8 +77,7 @@ jobs:
     parameters:
       tag:
         type: string
-    docker:
-      - image: docker:latest
+    executor: docker/machine
     steps:
       - checkout
       - setup_remote_docker
