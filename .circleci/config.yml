@@ -66,6 +66,7 @@ jobs:
       - checkout
       - docker/install-docker:
           version: latest
+      - run: chmod -R 777 /usr/local/bin/docker
       - docker/check
       - docker/build:
           image: << parameters.image >>
