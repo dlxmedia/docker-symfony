@@ -77,10 +77,15 @@ jobs:
     parameters:
       tag:
         type: string
-    executor: docker/machine
+    docker:
+      - image: docker:latest
     steps:
       - checkout
-      - docker/check
+      - setup_remote_docker
+      - run:
+          name: Configure Docker Hub
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_LOGIN" --password-stdin
       - run:
           name: Create and push manifest for multiarch
           command: |
