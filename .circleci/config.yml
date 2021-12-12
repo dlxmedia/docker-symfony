@@ -70,7 +70,7 @@ jobs:
           Extra flags to pass to docker build. For examples, see https://docs.docker.com/engine/reference/commandline/build
         type: string
     machine:
-      image: ubuntu-2004:202107-02
+      image: ubuntu-2004:202101-01
     resource_class: arm.medium
     steps:
       - checkout
@@ -82,7 +82,7 @@ jobs:
           extra_build_args: << parameters.extra_build_args >>
       - docker/push:
           image: << parameters.image >>
-          tag: << parameters.tag >>-amd64
+          tag: << parameters.tag >>-arm64
 
   push-multiarch-image:
     parameters:
