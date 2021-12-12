@@ -4,7 +4,6 @@ orbs:
   docker: circleci/docker@2.0.1
 
 commands:
-
   configure-dockerhub:
     description: Configure Docker Hub access
     steps:
@@ -17,9 +16,23 @@ jobs:
 
   build-amd64:
     parameters:
-      directory:
+      image:
+        description: Name of image to build
+        default: "dlxmedia/docker-symfony"
+        type: string
+      path:
+        default: .
+        description: |
+          Path to the directory containing your Dockerfile, defaults to . (working directory)
         type: string
       tag:
+        default: $CIRCLE_SHA1
+        description: Image tag, defaults to the value of $CIRCLE_SHA1
+        type: string
+      extra_build_args:
+        default: ""
+        description: |
+          Extra flags to pass to docker build. For examples, see https://docs.docker.com/engine/reference/commandline/build
         type: string
     docker:
       - image: docker:latest
@@ -27,18 +40,31 @@ jobs:
       - checkout
       - setup_remote_docker
       - configure-dockerhub
-      - run:
-          name: Build and push Docker Image for x86
-          working_directory: << parameters.directory >>
-          command: |
-            docker build -t << parameters.tag >>-amd64 .
-            docker push << parameters.tag >>-amd64
+      - docker/publish:
+          image: << parameters.image >>
+          path: << parameters.path >>
+          tag: << parameters.tag >>-amd64
+          extra_build_args: << parameters.extra_build_args >>
 
   build-arm64:
     parameters:
-      directory:
+      image:
+        description: Name of image to build
+        default: "dlxmedia/docker-symfony"
+        type: string
+      path:
+        default: .
+        description: |
+          Path to the directory containing your Dockerfile, defaults to . (working directory)
         type: string
       tag:
+        default: $CIRCLE_SHA1
+        description: Image tag, defaults to the value of $CIRCLE_SHA1
+        type: string
+      extra_build_args:
+        default: ""
+        description: |
+          Extra flags to pass to docker build. For examples, see https://docs.docker.com/engine/reference/commandline/build
         type: string
     machine:
       image: ubuntu-2004:202101-01
@@ -46,12 +72,11 @@ jobs:
     steps:
       - checkout
       - configure-dockerhub
-      - run:
-          name: Build and push Docker Image for arm64
-          working_directory: << parameters.directory >>
-          command: |
-            docker build -t << parameters.tag >>-arm64 .
-            docker push << parameters.tag >>-arm64
+      - docker/publish:
+          image: << parameters.image >>
+          path: << parameters.path >>
+          tag: << parameters.tag >>-arm64
+          extra_build_args: << parameters.extra_build_args >>
 
   push-multiarch-image:
     parameters:
@@ -73,27 +98,29 @@ jobs:
             docker manifest push << parameters.tag >>
 
 workflows:
+
   build-publish-80:
     jobs:
       - build-amd64:
-          directory: "8.0"
-          tag: "docker-symfony:8.0"
+          path: "8.0"
+          tag: "8.0"
       - build-arm64:
-          directory: "8.0"
-          tag: "docker-symfony:8.0"
+          path: "8.0"
+          tag: "8.0"
       - push-multiarch-image:
           tag: "docker-symfony:8.0"
           requires:
             - build-arm64
             - build-amd64
+
   build-publish-80-rr:
     jobs:
       - build-amd64:
-          directory: "8.0-rr"
-          tag: "docker-symfony:8.0-rr"
+          path: "8.0-rr"
+          tag: "8.0-rr"
       - build-arm64:
-          directory: "8.0-rr"
-          tag: "docker-symfony:8.0-rr"
+          path: "8.0-rr"
+          tag: "8.0-rr"
       - push-multiarch-image:
           tag: "docker-symfony:8.0-rr"
           requires:
