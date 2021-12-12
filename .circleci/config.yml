@@ -65,7 +65,7 @@ jobs:
     steps:
       - checkout
       - docker/install-docker:
-          version: 20.10.7
+          version: latest
       - docker/check
       - docker/build:
           image: << parameters.image >>
