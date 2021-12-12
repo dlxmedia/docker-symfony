@@ -26,7 +26,7 @@ ENV PUBLIC_DIR=$PUBLIC_DIR
 ENV REQUIRED_PACKAGES="git make openssl-dev zlib-dev libzip-dev zip curl curl-dev libpq supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo jpegoptim optipng pngquant gifsicle libheif libde265 libmagic imagemagick-dev imagemagick inotify-tools"
 ENV DEVELOPMENT_PACKAGES="$PHPIZE_DEPS autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PECL_PACKAGES="redis apcu ast inotify"
-ENV EXT_PACKAGES="zip sockets pdo_pgsql bcmath opcache mbstring iconv gettext intl exif gd pcntl sysvmsg sysvsem sysvshm"
+ENV EXT_PACKAGES="sockets pdo_mysql pdo_pgsql bcmath gettext intl gd exif pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -57,8 +57,11 @@ ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 # Configure GD to use freetype fonts
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 
+# Install Zip extension
+RUN docker-php-ext-configure zip && docker-php-ext-install zip
+
 # Install Non-Pecl Packages
-RUN /bin/sh -c docker-php-ext-enable $EXT_PACKAGES
+RUN docker-php-ext-install $EXT_PACKAGES
 
 # Install Pecl Packages
 #RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
