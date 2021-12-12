@@ -77,7 +77,9 @@ jobs:
     parameters:
       tag:
         type: string
-    executor: docker/docker
+    executor:
+      image: docker:latest
+      name: docker/docker
     steps:
       - checkout
       - setup_remote_docker
@@ -85,8 +87,7 @@ jobs:
       - run:
           name: Create and push manifest for multiarch
           command: |
-            docker manifest create \
-            << parameters.tag >> \
+            docker manifest create << parameters.tag >> \
             --amend << parameters.tag >>-arm64 \
             --amend << parameters.tag >>-amd64
             docker manifest push << parameters.tag >>
