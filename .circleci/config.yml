@@ -77,9 +77,8 @@ jobs:
     parameters:
       tag:
         type: string
-    executor:
-      image: docker:latest
-      name: docker/docker
+    docker:
+      - image: docker:latest
     steps:
       - checkout
       - setup_remote_docker
@@ -96,28 +95,28 @@ workflows:
 
   build-publish-80:
     jobs:
-      - build-amd64:
-          path: "8.0"
-          tag: "8.0"
-      - build-arm64:
-          path: "8.0"
-          tag: "8.0"
+#      - build-amd64:
+#          path: "8.0"
+#          tag: "8.0"
+#      - build-arm64:
+#          path: "8.0"
+#          tag: "8.0"
       - push-multiarch-image:
           tag: "docker-symfony:8.0"
-          requires:
-            - build-arm64
-            - build-amd64
+#          requires:
+#            - build-arm64
+#            - build-amd64
 
-  build-publish-80-rr:
-    jobs:
-      - build-amd64:
-          path: "8.0-rr"
-          tag: "8.0-rr"
-      - build-arm64:
-          path: "8.0-rr"
-          tag: "8.0-rr"
-      - push-multiarch-image:
-          tag: "docker-symfony:8.0-rr"
-          requires:
-            - build-arm64
-            - build-amd64
+#  build-publish-80-rr:
+#    jobs:
+#      - build-amd64:
+#          path: "8.0-rr"
+#          tag: "8.0-rr"
+#      - build-arm64:
+#          path: "8.0-rr"
+#          tag: "8.0-rr"
+#      - push-multiarch-image:
+#          tag: "docker-symfony:8.0-rr"
+#          requires:
+#            - build-arm64
+#            - build-amd64
