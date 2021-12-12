@@ -1,14 +1,18 @@
-# -----------------------------------------------------
-# Snowflake build
-# -----------------------------------------------------
-FROM golang:1.16-alpine as snowflake
+## -----------------------------------------------------
+## Snowflake build
+## -----------------------------------------------------
+FROM golang:1.17-alpine as snowflake
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /app
 
 RUN apk add git
 
 RUN git clone https://github.com/dlxmedia/snowflake-json .
-RUN go mod download && CGO_ENABLED=0 GOOS=linux go build -a -o snowflake .
+RUN go mod download && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -o snowflake .
 
 # -----------------------------------------------------
 # App
@@ -20,8 +24,7 @@ ARG PUBLIC_DIR=public
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
 ENV REQUIRED_PACKAGES="git make openssl-dev zlib-dev libzip-dev zip curl curl-dev libpq supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo jpegoptim optipng pngquant gifsicle libheif libde265 libmagic imagemagick-dev imagemagick inotify-tools"
-ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
-ENV PICKLE_PACKAGES="amqp"
+ENV DEVELOPMENT_PACKAGES="$PHPIZE_DEPS autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PECL_PACKAGES="redis apcu ast inotify"
 ENV EXT_PACKAGES="zip sockets pdo_pgsql bcmath opcache mbstring iconv gettext intl exif gd pcntl sysvmsg sysvsem sysvshm"
 
@@ -58,10 +61,19 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN /bin/sh -c docker-php-ext-enable $EXT_PACKAGES
 
 # Install Pecl Packages
-RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
-RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
-RUN yes '' | pecl install -f $PECL_PACKAGES
-RUN /bin/sh -c docker-php-ext-enable $PICKLE_PACKAGES $PECL_PACKAGES
+#RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
+#RUN for package in $PICKLE_PACKAGES; do pickle install $package --defaults; done
+RUN yes '' | pecl install -f $PECL_PACKAGES; \
+    docker-php-ext-enable $PECL_PACKAGES
+
+# AMQP from master @TODO upgrade to release version when php8 support is ready
+ENV EXT_AMQP_VERSION=master
+RUN docker-php-source extract \
+    && apk -Uu add git rabbitmq-c-dev \
+    && git clone --branch $EXT_AMQP_VERSION --depth 1 https://github.com/php-amqp/php-amqp.git /usr/src/php/ext/amqp \
+    && cd /usr/src/php/ext/amqp && git submodule update --init \
+    && docker-php-ext-install amqp \
+    && docker-php-source delete
 
 # MaxMind
 RUN apk add --no-cache libmaxminddb \
