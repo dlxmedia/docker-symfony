@@ -75,7 +75,7 @@ jobs:
 
   push-multiarch-image:
     parameters:
-      tag:
+      image:
         type: string
     docker:
       - image: docker:latest
@@ -89,10 +89,10 @@ jobs:
       - run:
           name: Create and push manifest for multiarch
           command: |
-            docker manifest create << parameters.tag >> \
-            --amend << parameters.tag >>-arm64 \
-            --amend << parameters.tag >>-amd64
-            docker manifest push << parameters.tag >>
+            docker manifest create << parameters.image >> \
+            --amend << parameters.image >>-arm64 \
+            --amend << parameters.image >>-amd64
+            docker manifest push << parameters.image >>
 
 workflows:
 
@@ -105,7 +105,7 @@ workflows:
 #          path: "8.0"
 #          tag: "8.0"
       - push-multiarch-image:
-          tag: "docker-symfony:8.0"
+          image: "dlxmedia/docker-symfony:8.0"
 #          requires:
 #            - build-arm64
 #            - build-amd64
