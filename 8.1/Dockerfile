@@ -5,22 +5,28 @@ ARG CADDY_VERSION=2
 # Caddy Install
 # -----------------------------------------------------
 FROM caddy:$CADDY_VERSION-builder AS builder
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
 
-RUN xcaddy build
+RUN CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH xcaddy build
 
-FROM caddy:$CADDY_VERSION
-
-# -----------------------------------------------------
-# Snowflake build
-# -----------------------------------------------------
-FROM golang:1.16-alpine as snowflake
+## -----------------------------------------------------
+## Snowflake build
+## -----------------------------------------------------
+FROM golang:1.17-alpine as snowflake
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /app
 
 RUN apk add git
 
 RUN git clone https://github.com/dlxmedia/snowflake-json .
-RUN go mod download && CGO_ENABLED=0 GOOS=linux go build -a -o snowflake .
+RUN go mod download && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -a -o snowflake .
 
 # -----------------------------------------------------
 # App Itself
@@ -36,8 +42,7 @@ ENV PUBLIC_DIR=$PUBLIC_DIR
 ENV REQUIRED_PACKAGES="git make openssl-dev zlib-dev libzip-dev zip curl curl-dev libpq supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libxml2-dev libacl libheif libde265 libmagic imagemagick-dev imagemagick jpegoptim optipng pngquant gifsicle"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev"
 ENV PECL_PACKAGES="redis apcu ast"
-#ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath gettext intl exif gd pcntl sysvmsg sysvsem sysvshm"
-ENV EXT_PACKAGES="gd pcntl sysvmsg sysvsem sysvshm"
+ENV EXT_PACKAGES="zip sockets pdo_mysql pdo_pgsql bcmath gettext intl exif pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -69,11 +74,12 @@ RUN apk add --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/c
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
 # Configure GD to use freetype fonts
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg && docker-php-ext-install gd && docker-php-ext-enable gd
 
 # Install Non-Pecl Packages
-RUN php -i
-RUN docker-php-ext-enable $EXT_PACKAGES
+RUN docker-php-ext-configure $EXT_PACKAGES; \
+    docker-php-ext-install $EXT_PACKAGES; \
+    docker-php-ext-enable $EXT_PACKAGES
 
 # Install Pecl Packages
 #RUN apk add --no-cache $PHPIZE_DEPS && wget https://github.com/FriendsOfPHP/pickle/releases/latest/download/pickle.phar && mv pickle.phar /usr/local/bin/pickle && chmod +x /usr/local/bin/pickle
