@@ -82,7 +82,6 @@ workflows:
           directory: "8.0"
           tag: "docker-symfony:8.0"
       - push-multiarch-image:
-          directory: "8.0"
           tag: "docker-symfony:8.0"
           requires:
             - build-arm64
