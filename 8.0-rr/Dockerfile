@@ -1,5 +1,5 @@
 ARG PHP_VERSION=8.0
-ARG RR_VERSION=2.4.1
+ARG RR_VERSION=2.6.0
 ARG RR_IMAGE=spiralscout/roadrunner:${RR_VERSION}
 
 # -----------------------------------------------------

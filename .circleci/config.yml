@@ -73,7 +73,7 @@ jobs:
             docker manifest push << parameters.tag >>
 
 workflows:
-  build-publish:
+  build-publish-80:
     jobs:
       - build-amd64:
           directory: "8.0"
@@ -83,6 +83,19 @@ workflows:
           tag: "docker-symfony:8.0"
       - push-multiarch-image:
           tag: "docker-symfony:8.0"
+          requires:
+            - build-arm64
+            - build-amd64
+  build-publish-80-rr:
+    jobs:
+      - build-amd64:
+          directory: "8.0-rr"
+          tag: "docker-symfony:8.0-rr"
+      - build-arm64:
+          directory: "8.0-rr"
+          tag: "docker-symfony:8.0-rr"
+      - push-multiarch-image:
+          tag: "docker-symfony:8.0-rr"
           requires:
             - build-arm64
             - build-amd64
