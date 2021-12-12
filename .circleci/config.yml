@@ -3,17 +3,7 @@ version: 2.1
 orbs:
   docker: circleci/docker@2.0.1
 
-commands:
-  configure-dockerhub:
-    description: Configure Docker Hub access
-    steps:
-      - run:
-          name: Docker login
-          command: |
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_LOGIN" --password-stdin
-
 jobs:
-
   build-amd64:
     parameters:
       image:
@@ -38,7 +28,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - configure-dockerhub
+      - docker/check
       - docker/build:
           image: << parameters.image >>
           path: << parameters.path >>
@@ -73,7 +63,7 @@ jobs:
     resource_class: arm.medium
     steps:
       - checkout
-      - configure-dockerhub
+      - docker/check
       - docker/build:
           image: << parameters.image >>
           path: << parameters.path >>
@@ -87,12 +77,11 @@ jobs:
     parameters:
       tag:
         type: string
-    docker:
-      - image: docker:latest
+    executor: docker/docker
     steps:
       - checkout
       - setup_remote_docker
-      - configure-dockerhub
+      - docker/check
       - run:
           name: Create and push manifest for multiarch
           command: |
