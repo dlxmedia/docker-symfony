@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  docker: circleci/docker@2.0.1
+
 commands:
 
   configure-dockerhub:
@@ -12,7 +15,12 @@ commands:
 
 jobs:
 
-  build-x86:
+  build-amd64:
+    parameters:
+      directory:
+        type: string
+      tag:
+        type: string
     docker:
       - image: docker:latest
     steps:
@@ -21,12 +29,17 @@ jobs:
       - configure-dockerhub
       - run:
           name: Build and push Docker Image for x86
-          working_directory: "8.0"
+          working_directory: << parameters.directory >>
           command: |
-            docker build -t dlxmedia/docker-symfony:8.0-x86 .
-            docker push dlxmedia/docker-symfony:8.0-x86
+            docker build -t << parameters.tag >>-amd64 .
+            docker push << parameters.tag >>-amd64
 
   build-arm64:
+    parameters:
+      directory:
+        type: string
+      tag:
+        type: string
     machine:
       image: ubuntu-2004:202101-01
     resource_class: arm.medium
@@ -35,12 +48,15 @@ jobs:
       - configure-dockerhub
       - run:
           name: Build and push Docker Image for arm64
-          working_directory: "8.0"
+          working_directory: << parameters.directory >>
           command: |
-            docker build -t dlxmedia/docker-symfony:8.0-arm64 .
-            docker push dlxmedia/docker-symfony:8.0-arm64
+            docker build -t << parameters.tag >>-arm64 .
+            docker push << parameters.tag >>-arm64
 
   push-multiarch-image:
+    parameters:
+      tag:
+        type: string
     docker:
       - image: docker:latest
     steps:
@@ -49,20 +65,25 @@ jobs:
       - configure-dockerhub
       - run:
           name: Create and push manifest for multiarch
-          working_directory: "8.0"
           command: |
             docker manifest create \
-            dlxmedia/docker-symfony:8.0 \
-            --amend dlxmedia/docker-symfony:8.0-arm64 \
-            --amend dlxmedia/docker-symfony:8.0-x86
-            docker manifest push dlxmedia/docker-symfony:8.0
+            << parameters.tag >> \
+            --amend << parameters.tag >>-arm64 \
+            --amend << parameters.tag >>-amd64
+            docker manifest push << parameters.tag >>
 
 workflows:
   build-publish:
     jobs:
-      - build-x86
-      - build-arm64
+      - build-amd64:
+          directory: "8.0"
+          tag: "docker-symfony:8.0"
+      - build-arm64:
+          directory: "8.0"
+          tag: "docker-symfony:8.0"
       - push-multiarch-image:
+          directory: "8.0"
+          tag: "docker-symfony:8.0"
           requires:
             - build-arm64
-            - build-x86
+            - build-amd64
