@@ -27,7 +27,8 @@ jobs:
     executor: docker/docker
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 20.10.7
       - docker/check
       - docker/build:
           image: << parameters.image >>
@@ -63,6 +64,8 @@ jobs:
     resource_class: arm.medium
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.7
       - docker/check
       - docker/build:
           image: << parameters.image >>
@@ -81,7 +84,8 @@ jobs:
       - image: docker:latest
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 20.10.7
       - run:
           name: Configure Docker Hub
           command: |
