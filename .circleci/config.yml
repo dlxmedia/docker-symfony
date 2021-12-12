@@ -80,7 +80,6 @@ jobs:
     executor: docker/machine
     steps:
       - checkout
-      - setup_remote_docker
       - docker/check
       - run:
           name: Create and push manifest for multiarch
