@@ -64,7 +64,7 @@ jobs:
     resource_class: arm.medium
     steps:
       - checkout
-      - docker/install-docker-tools:
+      - docker/install-docker:
           version: 20.10.7
       - docker/check
       - docker/build:
