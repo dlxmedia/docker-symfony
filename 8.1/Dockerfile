@@ -40,7 +40,7 @@ ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
 ENV REQUIRED_PACKAGES="git make openssl-dev zip curl curl-dev libpq supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libxml2-dev libacl libheif libde265 libmagic imagemagick-dev imagemagick jpegoptim optipng pngquant gifsicle"
-ENV DEVELOPMENT_PACKAGES="$PHPIZE_DEPS autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev zlib-dev libzip-dev"
+ENV DEVELOPMENT_PACKAGES="$PHPIZE_DEPS autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev zlib-dev libzip-dev libmaxminddb-dev"
 ENV PECL_PACKAGES="redis apcu ast"
 ENV EXT_PACKAGES="sockets pdo_mysql pdo_pgsql bcmath gettext intl gd exif pcntl sysvmsg sysvsem sysvshm"
 
@@ -107,7 +107,6 @@ RUN docker-php-source extract \
 
 # MaxMind
 RUN apk add --no-cache libmaxminddb \
-    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS git libmaxminddb-dev \
     && git clone https://github.com/maxmind/MaxMind-DB-Reader-php.git \
     && ( \
       cd MaxMind-DB-Reader-php/ext \
@@ -116,8 +115,7 @@ RUN apk add --no-cache libmaxminddb \
       && make \
       && make install \
     ) \
-    && rm -r MaxMind-DB-Reader-php \
-    && docker-php-ext-enable maxminddb
+    && rm -r MaxMind-DB-Reader-php
 
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES
