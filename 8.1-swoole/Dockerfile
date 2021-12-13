@@ -23,9 +23,9 @@ ARG PUBLIC_DIR=public
 
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
-ENV REQUIRED_PACKAGES="git make openssl-dev zip curl curl-dev libpq supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libxml2-dev libacl libheif libde265 libmagic imagemagick-dev imagemagick jpegoptim optipng pngquant gifsicle"
+ENV REQUIRED_PACKAGES="git make openssl-dev zip curl curl-dev libpq supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libxml2-dev libacl libheif libde265 libmagic imagemagick-dev imagemagick jpegoptim optipng pngquant gifsicle libmaxminddb"
 ENV DEVELOPMENT_PACKAGES="$PHPIZE_DEPS autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev zlib-dev libzip-dev libmaxminddb-dev"
-ENV PECL_PACKAGES="redis apcu ast inotify"
+ENV PECL_PACKAGES="redis apcu ast inotify maxminddb"
 ENV EXT_PACKAGES="sockets pdo_mysql pdo_pgsql bcmath gettext intl gd exif pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
@@ -85,19 +85,6 @@ RUN docker-php-source extract \
     && cd /usr/src/php/ext/imagick && git submodule update --init \
     && docker-php-ext-install imagick \
     && docker-php-source delete
-
-# MaxMind
-RUN apk add --no-cache libmaxminddb \
-    && git clone https://github.com/maxmind/MaxMind-DB-Reader-php.git \
-    && ( \
-      cd MaxMind-DB-Reader-php/ext \
-      && phpize \
-      && ./configure \
-      && make \
-      && make install \
-    ) \
-    && rm -r MaxMind-DB-Reader-php \
-    && docker-php-ext-install maxminddb
 
 # Swoole autoreload
 RUN chmod +x /usr/local/bin/autoreload.sh
