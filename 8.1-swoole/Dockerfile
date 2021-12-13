@@ -89,20 +89,5 @@ RUN docker-php-source extract \
 # Swoole autoreload
 RUN chmod +x /usr/local/bin/autoreload.sh
 
-# see: https://github.com/swoole/ext-postgresql/issues/9
-ENV EXT_POSTGRES_VERSION=master
-RUN git clone --branch $EXT_POSTGRES_VERSION --depth 1 https://github.com/swoole/ext-postgresql.git  \
-    && ( \
-      cd ext-postgresql \
-      && sed -i "s/#include <postgresql\/libpq-fe.h>/#include <\/usr\/include\/libpq-fe.h>/" php_swoole_postgresql.h \
-      && phpize \
-      && ./configure \
-      && make \
-      && make install \
-    ) \
-    && rm -r ext-postgresql \
-    && docker-php-source delete \
-    && /bin/sh -c docker-php-ext-enable swoole_postgresql
-
 # Delete Non-Required Packages
 RUN apk del $DEVELOPMENT_PACKAGES
