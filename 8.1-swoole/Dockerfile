@@ -54,11 +54,11 @@ RUN ulimit -n 16384
 RUN apk add --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
-# Configure GD to use freetype fonts
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
-
 # Install Zip extension
 RUN docker-php-ext-configure zip && docker-php-ext-install zip && docker-php-ext-enable zip
+
+# Configure GD to use freetype fonts
+RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp && docker-php-ext-install gd && docker-php-ext-enable gd
 
 # Install Non-Pecl Packages
 RUN docker-php-ext-install $EXT_PACKAGES && docker-php-ext-enable $EXT_PACKAGES

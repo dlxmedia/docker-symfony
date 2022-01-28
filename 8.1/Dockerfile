@@ -42,7 +42,7 @@ ENV PUBLIC_DIR=$PUBLIC_DIR
 ENV REQUIRED_PACKAGES="git make openssl-dev libzip zip curl curl-dev libpq supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libxml2-dev libacl libheif libde265 libmagic imagemagick-dev imagemagick jpegoptim optipng pngquant gifsicle libmaxminddb"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev zlib-dev libzip-dev libmaxminddb-dev"
 ENV PECL_PACKAGES="redis apcu ast maxminddb"
-ENV EXT_PACKAGES="pdo_mysql pdo_pgsql bcmath opcache gettext intl gd exif pcntl sysvmsg sysvsem sysvshm"
+ENV EXT_PACKAGES="pdo_mysql pdo_pgsql bcmath opcache gettext intl exif pcntl sysvmsg sysvsem sysvshm"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
@@ -73,14 +73,14 @@ RUN ulimit -n 16384
 RUN apk add --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted gnu-libiconv
 ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
-# Configure GD to use freetype fonts
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
-
 # Install Zip extension
 RUN docker-php-ext-configure zip && docker-php-ext-install zip && docker-php-ext-enable zip
 
 # Install Non-Pecl Packages
 RUN docker-php-ext-install $EXT_PACKAGES && docker-php-ext-enable $EXT_PACKAGES
+
+# Configure GD to use freetype fonts
+RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg --with-webp && docker-php-ext-install gd && docker-php-ext-enable gd
 
 # Install sockets
 RUN CFLAGS="$CFLAGS -D_GNU_SOURCE" docker-php-ext-install sockets && docker-php-ext-enable sockets
