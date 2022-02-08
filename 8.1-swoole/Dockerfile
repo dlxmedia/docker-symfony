@@ -17,13 +17,13 @@ RUN go mod download && CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build 
 # -----------------------------------------------------
 # App
 # -----------------------------------------------------
-FROM openswoole/swoole:4.8.1-php8.1-alpine
+FROM openswoole/swoole:4.10.0-php8.1-alpine
 
 ARG PUBLIC_DIR=public
 
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
-ENV REQUIRED_PACKAGES="git make openssl-dev libzip zip curl curl-dev libpq supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libavif libavif-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libxml2-dev libacl libheif libde265 libmagic imagemagick-dev imagemagick jpegoptim optipng pngquant gifsicle libmaxminddb"
+ENV REQUIRED_PACKAGES="git make openssl-dev libzip zip curl curl-dev libpq supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libavif libavif-dev libwebp libwebp-dev libpng freetype libjpeg-turbo libxml2-dev libacl libheif libde265 libmagic imagemagick-dev imagemagick jpegoptim optipng pngquant gifsicle libmaxminddb inotify-tools"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev zlib-dev libzip-dev libmaxminddb-dev"
 ENV PECL_PACKAGES="redis apcu ast inotify maxminddb"
 ENV EXT_PACKAGES="sockets pdo_mysql pdo_pgsql bcmath opcache gettext intl exif pcntl sysvmsg sysvsem sysvshm"
