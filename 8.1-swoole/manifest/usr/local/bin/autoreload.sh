@@ -21,13 +21,15 @@ fi
 # If environment variable AUTORELOAD_ANY_FILES is set to "true", "1", "yes", or "y", reload Supervisor programs when
 # any files under the root directory (/var/www by default) is changed; otherwise, reload only when PHP file(s) are
 # changed.
-while true ; do
-    inotifywait -r -q -m --format "%f" -e close_write,create,delete,modify,move "${ROOT_DIR}" |
-    while read -r file; do
-        if [ "${AUTORELOAD_ANY_FILES}" = "1" ] || [ "php" = "${file##*.}" ] ; then
-            echo "${file} updated"
-            supervisorctl signal TERM ${AUTORELOAD_PROGRAMS}
-            sleep 2
-        fi
-    done
+inotifywait -r -q -m --format "%f" -e close_write,create,delete,modify,move "${ROOT_DIR}" |
+while read -r file; do
+    if [ "${AUTORELOAD_ANY_FILES}" != "1" ] && [ "php" != "${file##*.}" ] ; then
+        continue
+    fi
+
+    echo "${file} updated"
+    supervisorctl signal TERM ${AUTORELOAD_PROGRAMS}
+    sleep 2
+
+    killall -15 inotifywait
 done
