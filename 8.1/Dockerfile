@@ -69,10 +69,6 @@ RUN apk add --update --no-cache $REQUIRED_PACKAGES $DEVELOPMENT_PACKAGES
 # Update ulimit
 RUN ulimit -n 16384
 
-# Fix Iconv
-RUN apk add --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted gnu-libiconv
-ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-
 # Install Zip extension
 RUN docker-php-ext-configure zip && docker-php-ext-install zip && docker-php-ext-enable zip
 
