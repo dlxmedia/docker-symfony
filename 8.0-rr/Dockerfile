@@ -18,10 +18,10 @@ ARG PUBLIC_DIR=public
 ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
-ENV REQUIRED_PACKAGES="git make libzip zip curl supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo jpegoptim optipng pngquant gifsicle libheif libde265 libmagic imagemagick-dev imagemagick libmaxminddb"
+ENV REQUIRED_PACKAGES="git make libzip zip curl supervisor python3 ca-certificates pcre linux-headers gettext-dev mysql-dev postgresql-dev rabbitmq-c icu libsodium-dev oniguruma-dev libjpeg-turbo-dev freetype-dev libpng-dev libwebp libwebp-dev libpng freetype libjpeg-turbo jpegoptim optipng pngquant gifsicle libheif libde265 libmagic imagemagick-dev imagemagick libmaxminddb libxslt-dev libgcrypt-dev"
 ENV DEVELOPMENT_PACKAGES="autoconf g++ openssh-client tar py-pip pcre-dev rabbitmq-c-dev icu-dev libmaxminddb-dev zlib-dev libzip-dev"
 ENV PECL_PACKAGES="redis apcu ast maxminddb"
-ENV EXT_PACKAGES="zip pdo_mysql pdo_pgsql bcmath opcache mbstring gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm"
+ENV EXT_PACKAGES="zip pdo_mysql pdo_pgsql bcmath opcache mbstring gettext intl exif sodium gd pcntl sysvmsg sysvsem sysvshm xsl"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER 1
