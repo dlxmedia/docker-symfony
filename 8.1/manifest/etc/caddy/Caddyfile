@@ -10,6 +10,8 @@
     php_fastcgi 127.0.0.1:9000
     file_server
 
+    trusted_proxies private_ranges
+
     header / {
         # Enable cross-site filter (XSS) and tell browser to block detected attacks
         X-XSS-Protection "1; mode=block"
