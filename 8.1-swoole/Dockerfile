@@ -18,9 +18,6 @@ WORKDIR /app
 # Copying manifest files to host
 COPY ./8.1-swoole/manifest /
 
-# Caddy
-COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
-
 # Composer install
 COPY --from=composer/composer:2-bin /composer /usr/bin/composer
 
