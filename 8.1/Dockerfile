@@ -34,9 +34,6 @@ WORKDIR /app
 # Copying manifest files to host
 COPY ./8.1/manifest /
 
-# Snowflake
-COPY --from=snowflake /app/snowflake /usr/local/bin/snowflake
-
 # Caddy
 COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
 
