@@ -118,33 +118,33 @@ jobs:
 
 workflows:
 
-  build-publish-80:
-    jobs:
-      - build-amd64:
-          path: "8.0"
-          tag: "8.0"
-      - build-arm64:
-          path: "8.0"
-          tag: "8.0"
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.0"
-          requires:
-            - build-arm64
-            - build-amd64
+  # build-publish-80:
+  #   jobs:
+  #     - build-amd64:
+  #         path: "8.0"
+  #         tag: "8.0"
+  #     - build-arm64:
+  #         path: "8.0"
+  #         tag: "8.0"
+  #     - push-multiarch-image:
+  #         image: "dlxmedia/docker-symfony:8.0"
+  #         requires:
+  #           - build-arm64
+  #           - build-amd64
 
-  build-publish-81:
-    jobs:
-      - build-amd64:
-          path: "8.1"
-          tag: "8.1"
-      - build-arm64:
-          path: "8.1"
-          tag: "8.1"
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.1"
-          requires:
-            - build-arm64
-            - build-amd64
+  # build-publish-81:
+  #   jobs:
+  #     - build-amd64:
+  #         path: "8.1"
+  #         tag: "8.1"
+  #     - build-arm64:
+  #         path: "8.1"
+  #         tag: "8.1"
+  #     - push-multiarch-image:
+  #         image: "dlxmedia/docker-symfony:8.1"
+  #         requires:
+  #           - build-arm64
+  #           - build-amd64
 
   build-publish-82:
     jobs:
@@ -160,30 +160,30 @@ workflows:
             - build-arm64
             - build-amd64
 
-  build-publish-81-swoole:
-    jobs:
-      - build-amd64:
-          path: "8.1-swoole"
-          tag: "8.1-swoole"
-      - build-arm64:
-          path: "8.1-swoole"
-          tag: "8.1-swoole"
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.1-swoole"
-          requires:
-            - build-arm64
-            - build-amd64
+  # build-publish-81-swoole:
+  #   jobs:
+  #     - build-amd64:
+  #         path: "8.1-swoole"
+  #         tag: "8.1-swoole"
+  #     - build-arm64:
+  #         path: "8.1-swoole"
+  #         tag: "8.1-swoole"
+  #     - push-multiarch-image:
+  #         image: "dlxmedia/docker-symfony:8.1-swoole"
+  #         requires:
+  #           - build-arm64
+  #           - build-amd64
 
-  build-publish-80-rr:
-    jobs:
-      - build-amd64:
-          path: "8.0-rr"
-          tag: "8.0-rr"
-      - build-arm64:
-          path: "8.0-rr"
-          tag: "8.0-rr"
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.0-rr"
-          requires:
-            - build-arm64
-            - build-amd64
+  # build-publish-80-rr:
+  #   jobs:
+  #     - build-amd64:
+  #         path: "8.0-rr"
+  #         tag: "8.0-rr"
+  #     - build-arm64:
+  #         path: "8.0-rr"
+  #         tag: "8.0-rr"
+  #     - push-multiarch-image:
+  #         image: "dlxmedia/docker-symfony:8.0-rr"
+  #         requires:
+  #           - build-arm64
+  #           - build-amd64
