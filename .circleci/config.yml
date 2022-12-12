@@ -146,6 +146,20 @@ workflows:
             - build-arm64
             - build-amd64
 
+  build-publish-82:
+    jobs:
+      - build-amd64:
+          path: "8.2"
+          tag: "8.2"
+      - build-arm64:
+          path: "8.2"
+          tag: "8.2"
+      - push-multiarch-image:
+          image: "dlxmedia/docker-symfony:8.2"
+          requires:
+            - build-arm64
+            - build-amd64
+
   build-publish-81-swoole:
     jobs:
       - build-amd64:
@@ -170,6 +184,20 @@ workflows:
           tag: "8.0-rr"
       - push-multiarch-image:
           image: "dlxmedia/docker-symfony:8.0-rr"
+          requires:
+            - build-arm64
+            - build-amd64
+
+  build-publish-82-swoole:
+    jobs:
+      - build-amd64:
+          path: "8.2-swoole"
+          tag: "8.2-swoole"
+      - build-arm64:
+          path: "8.2-swoole"
+          tag: "8.2-swoole"
+      - push-multiarch-image:
+          image: "dlxmedia/docker-symfony:8.2-swoole"
           requires:
             - build-arm64
             - build-amd64
