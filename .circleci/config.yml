@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  docker: circleci/docker@2.1.4
+  docker: circleci/docker@2.2.0
 
 jobs:
   build-amd64:
@@ -151,9 +151,11 @@ workflows:
       - build-amd64:
           path: "8.2"
           tag: "8.2"
+          extra_build_args: '--no-cache'
       - build-arm64:
           path: "8.2"
           tag: "8.2"
+          extra_build_args: '--no-cache'
       - push-multiarch-image:
           image: "dlxmedia/docker-symfony:8.2"
           requires:
@@ -193,9 +195,11 @@ workflows:
       - build-amd64:
           path: "8.2-swoole"
           tag: "8.2-swoole"
+          extra_build_args: '--no-cache'
       - build-arm64:
           path: "8.2-swoole"
           tag: "8.2-swoole"
+          extra_build_args: '--no-cache'
       - push-multiarch-image:
           image: "dlxmedia/docker-symfony:8.2-swoole"
           requires:
