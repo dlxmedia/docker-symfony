@@ -1,7 +1,7 @@
 # -----------------------------------------------------
 # App
 # -----------------------------------------------------
-FROM openswoole/swoole:php8.2-alpine
+FROM openswoole/swoole:4.12-php8.2-alpine
 
 ARG PUBLIC_DIR=public
 
