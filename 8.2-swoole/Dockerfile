@@ -1,7 +1,7 @@
 # -----------------------------------------------------
 # App
 # -----------------------------------------------------
-FROM phpswoole/swoole:php8.2-alpine
+FROM openswoole/swoole:php8.2-alpine
 
 ARG PUBLIC_DIR=public
 
@@ -43,6 +43,3 @@ RUN ulimit -n 16384
 
 # Swoole autoreload
 RUN chmod +x /usr/local/bin/autoreload.sh
-
-# Delete Non-Required Packages
-RUN apk del $DEVELOPMENT_PACKAGES
