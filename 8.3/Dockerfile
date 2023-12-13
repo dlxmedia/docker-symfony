@@ -50,10 +50,6 @@ RUN apk add --update --no-cache $REQUIRED_PACKAGES
 # Install PHP extensions
 RUN install-php-extensions $EXTENSIONS
 
-# Fix Iconv
-RUN apk add --no-cache --repository https://dl-cdn.alpinelinux.org/alpine/edge/community/ --allow-untrusted gnu-libiconv
-ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
-
 # Install sockets
 RUN CFLAGS="$CFLAGS -D_GNU_SOURCE" docker-php-ext-install sockets && docker-php-ext-enable sockets
 
