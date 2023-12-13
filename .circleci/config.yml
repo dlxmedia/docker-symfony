@@ -117,20 +117,6 @@ jobs:
             docker manifest push << parameters.image >>
 
 workflows:
-  build-publish-81:
-    jobs:
-      - build-amd64:
-          path: "8.1"
-          tag: "8.1"
-      - build-arm64:
-          path: "8.1"
-          tag: "8.1"
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.1"
-          requires:
-            - build-arm64
-            - build-amd64
-
   build-publish-82:
     jobs:
       - build-amd64:
@@ -147,16 +133,18 @@ workflows:
             - build-arm64
             - build-amd64
 
-  build-publish-81-swoole:
+  build-publish-83:
     jobs:
       - build-amd64:
-          path: "8.1-swoole"
-          tag: "8.1-swoole"
+          path: "8.3"
+          tag: "8.3"
+          extra_build_args: '--no-cache'
       - build-arm64:
-          path: "8.1-swoole"
-          tag: "8.1-swoole"
+          path: "8.3"
+          tag: "8.3"
+          extra_build_args: '--no-cache'
       - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.1-swoole"
+          image: "dlxmedia/docker-symfony:8.3"
           requires:
             - build-arm64
             - build-amd64
