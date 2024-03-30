@@ -180,3 +180,19 @@ workflows:
           requires:
             - build-arm64
             - build-amd64
+
+  build-publish-83-openswoole:
+    jobs:
+      - build-amd64:
+          path: "8.3-openswoole"
+          tag: "8.3-openswoole"
+          extra_build_args: '--no-cache'
+      - build-arm64:
+          path: "8.3-openswoole"
+          tag: "8.3-openswoole"
+          extra_build_args: '--no-cache'
+      - push-multiarch-image:
+          image: "dlxmedia/docker-symfony:8.3-openswoole"
+          requires:
+            - build-arm64
+            - build-amd64

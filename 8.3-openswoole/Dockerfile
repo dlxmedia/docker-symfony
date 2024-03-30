@@ -1,14 +1,14 @@
 # -----------------------------------------------------
 # App
 # -----------------------------------------------------
-FROM phpswoole/swoole:5.1-php8.3-alpine
+FROM openswoole/swoole:22.1-php8.3-alpine
 
 ARG PUBLIC_DIR=public
 
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
 ENV REQUIRED_PACKAGES="git make zip curl libpq supervisor gettext acl fcgi python3 ca-certificates pcre rabbitmq-c icu libavif libwebp libpng freetype libjpeg-turbo libacl libheif libde265 jpegoptim optipng pngquant gifsicle inotify-tools linux-headers"
-ENV EXTENSIONS="apcu ast maxminddb amqp zip pdo_pgsql bcmath opcache gettext intl exif pcntl sysvmsg sysvsem sysvshm xsl uuid igbinary bz2 gmp gd inotify"
+ENV EXTENSIONS="redis apcu ast maxminddb amqp zip pdo_mysql pdo_pgsql bcmath opcache gettext intl exif pcntl sysvmsg sysvsem sysvshm xsl uuid igbinary bz2 gmp gd inotify"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_NO_INTERACTION=1 COMPOSER_CACHE_DIR="/tmp"
@@ -16,7 +16,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_NO_INTERACTION=1 COMPOSER_CACHE_DIR="/tm
 WORKDIR /app
 
 # Copying manifest files to host
-COPY ./8.3-swoole/manifest /
+COPY ./8.3-openswoole/manifest /
 
 # Composer install
 COPY --from=composer/composer:2-bin /composer /usr/bin/composer
