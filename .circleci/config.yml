@@ -165,6 +165,22 @@ workflows:
             - build-arm64
             - build-amd64
 
+  build-publish-82-kazza:
+    jobs:
+      - build-amd64:
+          path: "8.2-kazza"
+          tag: "8.2-kazza"
+          extra_build_args: '--no-cache'
+      - build-arm64:
+          path: "8.2-kazza"
+          tag: "8.2-kazza"
+          extra_build_args: '--no-cache'
+      - push-multiarch-image:
+          image: "dlxmedia/docker-symfony:8.2-kazza"
+          requires:
+            - build-arm64
+            - build-amd64
+
   build-publish-83-swoole:
     jobs:
       - build-amd64:
