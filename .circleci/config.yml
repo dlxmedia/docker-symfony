@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  docker: circleci/docker@2.2.0
+  docker: circleci/docker@2.6.0
 
 jobs:
   build-amd64:
@@ -102,8 +102,7 @@ jobs:
       - image: docker:latest
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 20.10.7
+      - setup_remote_docker
       - run:
           name: Configure Docker Hub
           command: |
@@ -177,6 +176,22 @@ workflows:
           extra_build_args: '--no-cache'
       - push-multiarch-image:
           image: "dlxmedia/docker-symfony:8.2-kazza"
+          requires:
+            - build-arm64
+            - build-amd64
+
+  build-publish-83-kazza:
+    jobs:
+      - build-amd64:
+          path: "8.3-kazza"
+          tag: "8.3-kazza"
+          extra_build_args: '--no-cache'
+      - build-arm64:
+          path: "8.3-kazza"
+          tag: "8.3-kazza"
+          extra_build_args: '--no-cache'
+      - push-multiarch-image:
+          image: "dlxmedia/docker-symfony:8.3-kazza"
           requires:
             - build-arm64
             - build-amd64
