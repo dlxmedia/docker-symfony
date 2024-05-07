@@ -116,21 +116,21 @@ jobs:
             docker manifest push << parameters.image >>
 
 workflows:
-  build-publish-82:
-    jobs:
-      - build-amd64:
-          path: "8.2"
-          tag: "8.2"
-          extra_build_args: '--no-cache'
-      - build-arm64:
-          path: "8.2"
-          tag: "8.2"
-          extra_build_args: '--no-cache'
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.2"
-          requires:
-            - build-arm64
-            - build-amd64
+#  build-publish-82:
+#    jobs:
+#      - build-amd64:
+#          path: "8.2"
+#          tag: "8.2"
+#          extra_build_args: '--no-cache'
+#      - build-arm64:
+#          path: "8.2"
+#          tag: "8.2"
+#          extra_build_args: '--no-cache'
+#      - push-multiarch-image:
+#          image: "dlxmedia/docker-symfony:8.2"
+#          requires:
+#            - build-arm64
+#            - build-amd64
 
   build-publish-83:
     jobs:
@@ -148,37 +148,37 @@ workflows:
             - build-arm64
             - build-amd64
 
-  build-publish-82-swoole:
-    jobs:
-      - build-amd64:
-          path: "8.2-swoole"
-          tag: "8.2-swoole"
-          extra_build_args: '--no-cache'
-      - build-arm64:
-          path: "8.2-swoole"
-          tag: "8.2-swoole"
-          extra_build_args: '--no-cache'
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.2-swoole"
-          requires:
-            - build-arm64
-            - build-amd64
+#  build-publish-82-swoole:
+#    jobs:
+#      - build-amd64:
+#          path: "8.2-swoole"
+#          tag: "8.2-swoole"
+#          extra_build_args: '--no-cache'
+#      - build-arm64:
+#          path: "8.2-swoole"
+#          tag: "8.2-swoole"
+#          extra_build_args: '--no-cache'
+#      - push-multiarch-image:
+#          image: "dlxmedia/docker-symfony:8.2-swoole"
+#          requires:
+#            - build-arm64
+#            - build-amd64
 
-  build-publish-82-kazza:
-    jobs:
-      - build-amd64:
-          path: "8.2-kazza"
-          tag: "8.2-kazza"
-          extra_build_args: '--no-cache'
-      - build-arm64:
-          path: "8.2-kazza"
-          tag: "8.2-kazza"
-          extra_build_args: '--no-cache'
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.2-kazza"
-          requires:
-            - build-arm64
-            - build-amd64
+#  build-publish-82-kazza:
+#    jobs:
+#      - build-amd64:
+#          path: "8.2-kazza"
+#          tag: "8.2-kazza"
+#          extra_build_args: '--no-cache'
+#      - build-arm64:
+#          path: "8.2-kazza"
+#          tag: "8.2-kazza"
+#          extra_build_args: '--no-cache'
+#      - push-multiarch-image:
+#          image: "dlxmedia/docker-symfony:8.2-kazza"
+#          requires:
+#            - build-arm64
+#            - build-amd64
 
   build-publish-83-kazza:
     jobs:
