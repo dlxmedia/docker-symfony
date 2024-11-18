@@ -12,7 +12,7 @@ jobs:
               uses: vlaurin/action-ghcr-prune@v0.6.0
               with:
                     token: ${{ secrets.GITHUB_TOKEN }}
-                    organization: sctr
+                    organization: dlxmedia
                     container: docker-symfony
                     dry-run: false
                     prune-untagged: true
