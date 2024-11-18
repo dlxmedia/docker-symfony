@@ -1,4 +1,4 @@
-ARG PHP_VERSION=8.3
+ARG PHP_VERSION=8.4.0RC4-fpm-alpine
 ARG CADDY_VERSION=2
 
 # -----------------------------------------------------
@@ -24,7 +24,7 @@ ENV PORT=$PORT
 ENV PUBLIC_DIR=$PUBLIC_DIR
 
 ENV REQUIRED_PACKAGES="git make zip curl libpq supervisor gettext acl fcgi python3 ca-certificates pcre rabbitmq-c icu libavif libwebp libpng freetype libjpeg-turbo libacl libheif libde265 imagemagick imagemagick-dev imagemagick-libs jpegoptim optipng pngquant gifsicle linux-headers file"
-ENV EXTENSIONS="redis apcu ast maxminddb amqp zip pdo_mysql pdo_pgsql bcmath opcache gettext intl exif pcntl sysvmsg sysvsem sysvshm xsl uuid igbinary bz2 gmp sockets imagick gd"
+ENV EXTENSIONS="redis apcu ast maxminddb amqp zip pdo_mysql pdo_pgsql bcmath opcache gettext intl exif pcntl sysvmsg sysvsem sysvshm xsl uuid igbinary bz2 gmp sockets Imagick/imagick@65e27f2bc0 gd"
 
 ENV DOCKER=true
 ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_NO_INTERACTION=1 COMPOSER_CACHE_DIR="/tmp"
@@ -32,7 +32,7 @@ ENV COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_NO_INTERACTION=1 COMPOSER_CACHE_DIR="/tm
 WORKDIR /app
 
 # Copying manifest files to host
-COPY ./8.3/manifest /
+COPY ./8.4/manifest /
 
 # Caddy
 COPY --from=builder /usr/bin/caddy /usr/local/bin/caddy
@@ -45,7 +45,7 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 RUN chmod +x /usr/local/bin/install-php-extensions
 
 # Install required packages
-RUN apk add --update --no-cache $REQUIRED_PACKAGES
+RUN apk add --update --no-cache $REQUIRED_PACKAGES && rm -rf /var/cache/apk/*
 
 # Install PHP extensions
 RUN IPE_ICU_EN_ONLY=1 install-php-extensions $EXTENSIONS

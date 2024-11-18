@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  docker: circleci/docker@2.6.0
+  docker: circleci/docker@2.8.1
 
 jobs:
   build-amd64:
@@ -181,50 +181,50 @@ workflows:
 #            - build-arm64
 #            - build-amd64
 
-  build-publish-83-kazza:
-    jobs:
-      - build-amd64:
-          path: "8.3-kazza"
-          tag: "8.3-kazza"
-          extra_build_args: '--no-cache'
-      - build-arm64:
-          path: "8.3-kazza"
-          tag: "8.3-kazza"
-          extra_build_args: '--no-cache'
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.3-kazza"
-          requires:
-            - build-arm64
-            - build-amd64
+#  build-publish-83-kazza:
+#    jobs:
+#      - build-amd64:
+#          path: "8.3-kazza"
+#          tag: "8.3-kazza"
+#          extra_build_args: '--no-cache'
+#      - build-arm64:
+#          path: "8.3-kazza"
+#          tag: "8.3-kazza"
+#          extra_build_args: '--no-cache'
+#      - push-multiarch-image:
+#          image: "dlxmedia/docker-symfony:8.3-kazza"
+#          requires:
+#            - build-arm64
+#            - build-amd64
 
-  build-publish-83-swoole:
-    jobs:
-      - build-amd64:
-          path: "8.3-swoole"
-          tag: "8.3-swoole"
-          extra_build_args: '--no-cache'
-      - build-arm64:
-          path: "8.3-swoole"
-          tag: "8.3-swoole"
-          extra_build_args: '--no-cache'
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.3-swoole"
-          requires:
-            - build-arm64
-            - build-amd64
-
-  build-publish-83-openswoole:
-    jobs:
-      - build-amd64:
-          path: "8.3-openswoole"
-          tag: "8.3-openswoole"
-          extra_build_args: '--no-cache'
-      - build-arm64:
-          path: "8.3-openswoole"
-          tag: "8.3-openswoole"
-          extra_build_args: '--no-cache'
-      - push-multiarch-image:
-          image: "dlxmedia/docker-symfony:8.3-openswoole"
-          requires:
-            - build-arm64
-            - build-amd64
+#  build-publish-83-swoole:
+#    jobs:
+#      - build-amd64:
+#          path: "8.3-swoole"
+#          tag: "8.3-swoole"
+#          extra_build_args: '--no-cache'
+#      - build-arm64:
+#          path: "8.3-swoole"
+#          tag: "8.3-swoole"
+#          extra_build_args: '--no-cache'
+#      - push-multiarch-image:
+#          image: "dlxmedia/docker-symfony:8.3-swoole"
+#          requires:
+#            - build-arm64
+#            - build-amd64
+#
+#  build-publish-83-openswoole:
+#    jobs:
+#      - build-amd64:
+#          path: "8.3-openswoole"
+#          tag: "8.3-openswoole"
+#          extra_build_args: '--no-cache'
+#      - build-arm64:
+#          path: "8.3-openswoole"
+#          tag: "8.3-openswoole"
+#          extra_build_args: '--no-cache'
+#      - push-multiarch-image:
+#          image: "dlxmedia/docker-symfony:8.3-openswoole"
+#          requires:
+#            - build-arm64
+#            - build-amd64
