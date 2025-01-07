@@ -15,6 +15,7 @@ jobs:
                 phpversion:
                     - 8.3
                     - 8.4
+                    - 8.4-frankenphp
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -43,6 +44,7 @@ jobs:
                 phpversion:
                     - 8.3
                     - 8.4
+                    - 8.4-frankenphp
         runs-on: ubuntu-latest-arm64
         steps:
             - name: Checkout
@@ -72,6 +74,7 @@ jobs:
                 phpversion:
                     - 8.3
                     - 8.4
+                    - 8.4-frankenphp
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
